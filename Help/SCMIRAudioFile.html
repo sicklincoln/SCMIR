@@ -1,0 +1,529 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.36">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #102ac3}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #cd1713}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #737373}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #cd1713; min-height: 12.0px}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #008225}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p13 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #102ac3}
+span.s3 {color: #000000}
+span.s4 {color: #737373}
+span.s5 {color: #cd1713}
+span.s6 {color: #102bc3}
+span.s7 {color: #008225}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>SCMIRAudioFile<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>Represents an audio file for the SCMIR analysis system</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
+<p class="p2"><br></p>
+<p class="p1"><b>Inherits from: Object</b></p>
+<p class="p3"><br></p>
+<p class="p1">Use this class to load a sound file and run feature extraction, normalization, and subsequent similarity tasks. Audio processing uses non-realtime (NRT) mode for scsynth. The feature extraction method must be called within a Routine from outside; this supports running this across lots of files in batch processing without spawning multiple simultaneous scsynth instances, or trying to use the results of processing before they are actually calculated! <span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1">The format for requesting feature extraction is<span class="Apple-converted-space"> </span></p>
+<p class="p1">[[featureclass, featurespecificparams]]</p>
+<p class="p1">So</p>
+<p class="p4">[[<span class="s2">MFCC</span>, 13], [<span class="s2">Chromagram</span>, 12]]</p>
+<p class="p1">means extract 13 MFCC coefficients and 12 chroma (12TET),<span class="Apple-converted-space"> </span></p>
+<p class="p1">Normalization is automatically applied, by default on a per individual feature basis (except for chroma, which are normalized as a group of features), and normalized with respect to the current file. There are mechanisms to have global normalisation over a corpus, see batch examples below.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1">Features supported: MFCC, Chromagram, Loudness, Tartini, SensoryDissonance, SpecCentroid, SpecPcile, SpecFlatness, FFTCrest, FFTSpread, FFTSlope, Onsets in raw detection function mode, Transient</p>
+<p class="p2"><br></p>
+<p class="p1">Assumptions/notes:</p>
+<p class="p1">-Though the original sound file could be any rate, the MIR system sampling rate of 44100 is assumed.<span class="Apple-converted-space"> </span></p>
+<p class="p1">-Normalization is by default on a file by file basis, but see below for a global normalization example. You can turn off normalisation by passing false to extractFeatures</p>
+<p class="p1">-For a large file, similarity matrix calculations are unavoidably slow when calculating within SC language itself. This is why auxilliary externals are used invoked from the language (now the default with similarityMatrix)<span class="Apple-converted-space"> </span></p>
+<p class="p1">-Version 0.3 introduces beat-locked features. You can even impose a beat trail (which could be any section times you like) via setBeatData then gatherFeaturesByBeats, or otherwise use the automatic extraction procedures (see below)</p>
+<p class="p1">-Version 0.4 introduces onset detection, and arbitrary guide segmentations for feature accumulation, via gatherFeaturesBySegments (the onsets specific variant is gatherFeaturesByOnsets).<span class="Apple-converted-space"> </span></p>
+<p class="p1">-Note that for the cosine metric, the default for similarity matrices, the value is always 0.0 for a single feature feature vector, so we're assuming feature vectors have multiple entries in general. Manhattan and Euclidean metrics will be fine, however. <span class="Apple-converted-space"> </span></p>
+<p class="p1"><b>See also:</b> SCMIR, SCMIRSimiliarityMatrix</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6"><b>Examples</b></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p7"><span class="s3">e = </span>SCMIRAudioFile<span class="s3">(</span><span class="s4">"sounds/a11wlk01.wav"</span><span class="s3">, [[</span>MFCC<span class="s3">, 13], [</span>Chromagram<span class="s3">, 12]]);</span></p>
+<p class="p3"><br></p>
+<p class="p8">//shortcut versions also work, defaults will be applied for MFCC (10 coeffs) and Chromagram (12TET)</p>
+<p class="p8">//e = SCMIRAudioFile("sounds/a11wlk01.wav",[MFCC,Chromagram]);</p>
+<p class="p3"><br></p>
+<p class="p4">e.extractFeatures()</p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">{e.extractFeatures()}.fork </span>//wrapped in fork gives posted feedback as it goes; won't block main thread</p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">e.save(</span><span class="s4">"/Users/nickcollins/Desktop/a11wlk01.scmirZ"</span><span class="s3">)<span class="Apple-tab-span">	</span></span>//save .scmirZ files using ZArchive; binary storage of feature data and other instance variables</p>
+<p class="p3"><br></p>
+<p class="p9"><span class="s3">e.load(</span>"/Users/nickcollins/Desktop/a11wlk01.scmirZ"<span class="s3">)</span></p>
+<p class="p8">//if no filenames are provided, will be placed in temp directory</p>
+<p class="p3"><br></p>
+<p class="p4">e.featuredata</p>
+<p class="p3"><br></p>
+<p class="p4">e.numfeatures</p>
+<p class="p3"><br></p>
+<p class="p4">e.numframes</p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">e.plotFeatures(300,300,40); </span>//will resample feature data to fit dimensions requested</p>
+<p class="p3"><br></p>
+<p class="p4">e.plotFeatures(400,600,40, true); <span class="s5">//line based plot</span></p>
+<p class="p3"><br></p>
+<p class="p8">//caution: if featuredata size is large, working out a similarityMatrix gets heavier (which is why an external program is being invoked for the heavy lifting).<span class="Apple-converted-space"> </span></p>
+<p class="p8">//you can downsample to reduce computation time using the first argument, units, to this method, which aggregates frames into larger blocks in bunches of unit frames</p>
+<p class="p8"><span class="s3">m = e.similarityMatrix();<span class="Apple-converted-space">  </span></span>//m is an SCMIRSimilarityMatrix object</p>
+<p class="p3"><br></p>
+<p class="p4">m.plot(4)</p>
+<p class="p3"><br></p>
+<p class="p8">//shortcut</p>
+<p class="p8"><span class="s3">e.plotSelfSimilarity(1,4); </span>//unit = 1, stretch = 4, params as above<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//if already saved .scmirZ file, create directly from it.<span class="s3"><span class="Apple-converted-space"> </span></span></p>
+<p class="p8"><span class="s3">e = </span><span class="s2">SCMIRAudioFile</span><span class="s3">.newFromZ(</span><span class="s4">"/Users/nickcollins/Desktop/a11wlk01.scmirZ"</span><span class="s3">) </span>//Z archive will have stored original location of audio file; if moved in meantime, may need to update instance variable data, or just start anew</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//a bigger file (substitute your own)</p>
+<p class="p9"><span class="s3">f = </span><span class="s2">SCMIRAudioFile</span><span class="s3">(</span>"/data/audio/mirdata/pixiesivebeentired.wav"<span class="s3">, [[</span><span class="s2">MFCC</span><span class="s3">, 13], [</span><span class="s2">Chromagram</span><span class="s3">, 12]]);</span></p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">f.extractFeatures(); </span>//wait for me to finish</p>
+<p class="p3"><br></p>
+<p class="p4">f.plotFeatures(800,600,100);<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p4">f.plotFeatures(1000,800,100,true);<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p10"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//faster calculation of similiarity matrix via external command line app; can specify different metrics</p>
+<p class="p8">//Euclidean</p>
+<p class="p4">b = f.similarityMatrix(100, 2);</p>
+<p class="p4">b.plot(5,6);</p>
+<p class="p3"><br></p>
+<p class="p8">//Manhattan</p>
+<p class="p4">c = f.similarityMatrix(100, 1);</p>
+<p class="p4">c.plot(5,6);</p>
+<p class="p3"><br></p>
+<p class="p8">//Cosine</p>
+<p class="p4">d = f.similarityMatrix(100, 0);</p>
+<p class="p8"><span class="s3">d.plot(5,20); </span>//boosted contrast</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//find novelty curve</p>
+<p class="p4">(</p>
+<p class="p4"><span class="Apple-tab-span">	</span>d = f.similarityMatrix(10, 2);<span class="Apple-converted-space"> <span class="Apple-tab-span">	</span></span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>n = f.novelty(d,30);<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>n.normalize.plot; <span class="s5">//plot it</span></p>
+<p class="p4">)</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//find novelty curve and peak pick to extract sections</p>
+<p class="p8"><span class="s3">l = f.findSections(); </span>//wait for me to finish</p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">l </span>//l is a list of section boundaries<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//predominant f0, hasFreq, and 4 chroma (activity in minor third regions of the octave)</p>
+<p class="p9"><span class="s3">f = </span><span class="s2">SCMIRAudioFile</span><span class="s3">(</span>"/data/audio/mirdata/pixiesivebeentired.wav"<span class="s3">, [[</span><span class="s2">Tartini</span><span class="s3">],[</span><span class="s2">Chromagram</span><span class="s3">, 4]]);</span></p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">f.extractFeatures(); </span>//wait for me to finish</p>
+<p class="p3"><br></p>
+<p class="p4">f.plotFeatures(800,600,100,true);<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">a = f.similarityMatrix(100); </span>//100 features per similarity unit</p>
+<p class="p3"><br></p>
+<p class="p8">//file is about 180 seconds long; eventual plot will be around 180*4 pixels to a side<span class="Apple-converted-space"> </span></p>
+<p class="p4">a.plot(4);<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p9"><span class="s3">e = </span><span class="s2">SCMIRAudioFile</span><span class="s3">(</span>"sounds/a11wlk01.wav"<span class="s3">, [</span><span class="s6">Loudness</span><span class="s3">]);</span></p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">e.extractFeatures(); </span>//wait for me to finish</p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">e.plotFeatureTrail<span class="Apple-tab-span">	</span></span>//plot first feature by default; only one, so plots that</p>
+<p class="p3"><br></p>
+<p class="p8">//pretty image</p>
+<p class="p8"><span class="s3">e.plotSelfSimilarity(1,3,1); </span>//one pixel is one similarity unit, can be stretched using second argument for smaller matrices</p>
+<p class="p3"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p3"><br></p>
+<p class="p8">//data provided:</p>
+<p class="p4">e.duration</p>
+<p class="p4">e.numframes</p>
+<p class="p4">e.featuredata</p>
+<p class="p4">e.numfeatures</p>
+<p class="p4">e.numChannels</p>
+<p class="p4">e.featureinfo</p>
+<p class="p4">e.basename</p>
+<p class="p4">e.analysispath</p>
+<p class="p4">e.sourcepath</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//test more features:</p>
+<p class="p3"><br></p>
+<p class="p7"><span class="s3">e = </span>SCMIRAudioFile<span class="s3">(</span><span class="s4">"sounds/a11wlk01.wav"</span><span class="s3">, [[</span>Loudness<span class="s3">],[</span>SpecCentroid<span class="s3">],[</span>SpecPcile<span class="s3">, 0.95],[</span>SpecPcile<span class="s3">, 0.8],[</span>SpecFlatness<span class="s3">],[</span>FFTCrest<span class="s3">],[</span>FFTCrest<span class="s3">, 0, 2000], [</span>FFTCrest<span class="s3">, 2000, 10000],[</span>FFTSpread<span class="s3">],[</span>FFTSlope<span class="s3">],[</span>SensoryDissonance<span class="s3">]]);</span></p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">e.extractFeatures(); </span>//wait for me to finish</p>
+<p class="p3"><br></p>
+<p class="p4">e.plotFeatureTrail(0,0.0,2.0) <span class="s5">//Loudness over two seconds</span></p>
+<p class="p8"><span class="s3">e.plotFeatureTrail(4,1.0,3.0) </span>//SpecFlatness over two seconds starting at time 1.0</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//export ARFF file (for use with Weka Java-based machine learning software)</p>
+<p class="p8">//defaults to features.arff filename in the SC application directory</p>
+<p class="p4">e.exportARFF</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">e.plotSelfSimilarity(1,3); </span>//one pixel is one similarity unit, can be stretched using second argument for smaller matrices</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//test beat extraction:<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p9"><span class="s3">f = </span><span class="s2">SCMIRAudioFile</span><span class="s3">(</span>"/data/audio/mirdata/pixiesivebeentired.wav"<span class="s3">, [[</span><span class="s2">MFCC</span><span class="s3">, 13], [</span><span class="s2">Chromagram</span><span class="s3">, 12]]);</span></p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">f.extractBeats(); </span>//wait for me to finish</p>
+<p class="p3"><br></p>
+<p class="p4">a = f.beatdata; <span class="s5">//beat locations</span></p>
+<p class="p3"><br></p>
+<p class="p4">b = f.tempi; <span class="s5">//tempo curve</span></p>
+<p class="p4">b.plot2</p>
+<p class="p8"><span class="s3">f.tempo; </span>//estimate of global tempo as median</p>
+<p class="p3"><br></p>
+<p class="p8">//Experimental: via auxilliary program: BeatRoot from Simon Dixon http://www.eecs.qmul.ac.uk/~simond/beatroot/</p>
+<p class="p8">//provide location of the jar file</p>
+<p class="p9"><span class="s3">f.extractBeatsViaBeatRoot(</span>"/Users/nickcollins/Desktop/tosort/beatroot/beatroot-0.5.7.jar"<span class="s3">); </span><span class="s5">//wait for me to finish</span></p>
+<p class="p3"><br></p>
+<p class="p4">a = f.beatdata</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//test beatwise feature accumulation</p>
+<p class="p3"><br></p>
+<p class="p9"><span class="s3">f = </span><span class="s2">SCMIRAudioFile</span><span class="s3">(</span>"/data/audio/mirdata/pixiesivebeentired.wav"<span class="s3">, [[</span><span class="s2">MFCC</span><span class="s3">, 13], [</span><span class="s2">Chromagram</span><span class="s3">, 12]]);</span></p>
+<p class="p3"><br></p>
+<p class="p4">(</p>
+<p class="p4"><span class="Apple-tab-span">	</span>f.extractFeatures();<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>f.extractBeats();</p>
+<p class="p4">)</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4">f.numfeatures</p>
+<p class="p4">f.numframes</p>
+<p class="p3"><br></p>
+<p class="p4">b = f.similarityMatrix(50, 2);</p>
+<p class="p4">b.plot(4,10);</p>
+<p class="p3"><br></p>
+<p class="p8">//by default, replaces old featuredata with beatwise features</p>
+<p class="p8"><span class="s3">f.gatherFeaturesByBeats </span>//after this operation, featuredata will be beat locked; if referencing specific frames, must use beatdata to get (starting) times</p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">f.featuresbysegments </span>//this flag has now been set to true</p>
+<p class="p3"><br></p>
+<p class="p8">//should now be same:</p>
+<p class="p4">f.featuredata.size/f.numfeatures</p>
+<p class="p4">f.numbeats</p>
+<p class="p3"><br></p>
+<p class="p4">b = f.similarityMatrix(4, 2);</p>
+<p class="p4">b.plot(5,10);</p>
+<p class="p3"><br></p>
+<p class="p4">l = f.findSections(0,1,20);</p>
+<p class="p3"><br></p>
+<p class="p4">l</p>
+<p class="p3"><br></p>
+<p class="p8">//comparison of beat locked features and standard feature vectors for section finding; on this track, get better estimates from beat-locked segments (if out by a second or two)</p>
+<p class="p8">//found by beat based feature vectors: [ 13.556099891663, 44.077278137207, 57.808979034424, 67.929977416992, 78.484901428223, 98.114463806152, 113.2437210083, 121.31120300293, 129.8851776123, 140.64761352539, 154.83645629883 ]</p>
+<p class="p8">//found by blocks of standard feature frames</p>
+<p class="p8">//[ 19.272562358277, 58.049886621315, 97.52380952381, 129.10294784581, 135.37233560091, 141.87392290249 ]</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//test of onset detection</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p9"><span class="s3">f = </span><span class="s2">SCMIRAudioFile</span><span class="s3">(</span>"/data/audio/mirdata/pixiesivebeentired.wav"<span class="s3">, [[</span><span class="s2">MFCC</span><span class="s3">, 13], [</span><span class="s2">Chromagram</span><span class="s3">, 12]]);</span></p>
+<p class="p8">//f = SCMIRAudioFile("sounds/a11wlk01.wav", [[MFCC, 13], [Chromagram, 12]]);</p>
+<p class="p3"><br></p>
+<p class="p4">(</p>
+<p class="p4">f.extractFeatures();<span class="Apple-converted-space"> </span></p>
+<p class="p4">f.extractOnsets();</p>
+<p class="p4">)</p>
+<p class="p3"><br></p>
+<p class="p4">f.onsetdata</p>
+<p class="p4">f.numonsets</p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">f.gatherFeaturesByOnsets </span>//after this operation, featuredata will be onset locked; if referencing specific frames, must use onsetdata to get (starting) times</p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">f.featuresbysegments </span>//this flag has now been set to true</p>
+<p class="p3"><br></p>
+<p class="p8">//should now be same:</p>
+<p class="p4">f.featuredata.size/f.numfeatures</p>
+<p class="p4">f.numonsets</p>
+<p class="p3"><br></p>
+<p class="p4">b = f.similarityMatrix(5, 2);</p>
+<p class="p4">b.plot(1,10);</p>
+<p class="p3"><br></p>
+<p class="p4">l = f.findSections(0,1,20);</p>
+<p class="p3"><br></p>
+<p class="p4">l</p>
+<p class="p3"><br></p>
+<p class="p8">//found by onset detection, compare to above</p>
+<p class="p8">//[ 11.3429479599, 20.416145324707, 29.779592514038, 35.247890472412, 41.052879333496, 47.008796691895, 58.955463409424, 67.877731323242, 78.233833312988, 82.494697570801, 89.559364318848, 99.642631530762, 106.09777832031, 111.35709381104, 121.05142974854, 130.75736999512, 140.81161499023, 156.64181518555, 167.87446594238 ]</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//raw onset detection function as feature</p>
+<p class="p9"><span class="s3">f = </span><span class="s2">SCMIRAudioFile</span><span class="s3">(</span>"/data/audio/mirdata/pixiesivebeentired.wav"<span class="s3">, [[</span><span class="s2">Onsets</span><span class="s3">,</span><span class="s7">\rcomplex</span><span class="s3">]]);</span></p>
+<p class="p3"><br></p>
+<p class="p4">f.extractFeatures();<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p4">f.numframes</p>
+<p class="p3"><br></p>
+<p class="p4">f.featuredata.plot</p>
+<p class="p3"><br></p>
+<p class="p4">f.duration</p>
+<p class="p3"><br></p>
+<p class="p8">//artificial segmentation: one per second</p>
+<p class="p4">a= (0.0,1.0..(f.duration))</p>
+<p class="p3"><br></p>
+<p class="p8">//averaging for each second</p>
+<p class="p4">f.gatherFeaturesBySegments(a);<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p4">f.numframes</p>
+<p class="p3"><br></p>
+<p class="p4">f.featuredata.plot</p>
+<p class="p3"><br></p>
+<p class="p8">//must recalculate features, didn't keep them in previous call when replaced with segment averages</p>
+<p class="p8"><span class="s3">f.extractFeatures(); </span>//wait for me to finish</p>
+<p class="p3"><br></p>
+<p class="p8">//max over each second rather than mean</p>
+<p class="p4">f.gatherFeaturesBySegments(a, <span class="s2">true</span>, 1);<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p4">f.numframes</p>
+<p class="p3"><br></p>
+<p class="p4">f.featuredata.plot</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//test of batch processing</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//or via pathMatch, e.g. "sounds/*.aiff".pathMatch</p>
+<p class="p3"><br></p>
+<p class="p9"><span class="s2">SCMIR</span><span class="s3">.setTempDir(</span>"/Users/nickcollins/Desktop/SCMIRTest"<span class="s3">) </span><span class="s5">//all saved files will go here</span></p>
+<p class="p3"><br></p>
+<p class="p9"><span class="s3">~files = [</span>"sounds/a11wlk01.wav"<span class="s3">, </span>"/data/audio/mirdata/pixiesivebeentired.wav"<span class="s3">];<span class="Apple-converted-space"> </span></span></p>
+<p class="p3"><br></p>
+<p class="p8">//batch process; within Routine to get progress feedback as it calculates (would be slightly faster without, but calculation beachball locking sclang may seem alarming)</p>
+<p class="p4">(<span class="Apple-tab-span">	</span></p>
+<p class="p4">{</p>
+<p class="p4">~files.do{<span class="s2">|filename,i|</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p4">[i, filename].postln;</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p7"><span class="s3">e = </span>SCMIRAudioFile<span class="s3">(filename, [[</span>Loudness<span class="s3">]]);</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p4">e.extractFeatures();</p>
+<p class="p3"><br></p>
+<p class="p9"><span class="s3">e.save(</span>"/Users/nickcollins/Desktop/SCMIRTest/"<span class="s3">++(filename.splitext[0].basename++</span>".scmirZ"<span class="s3">));</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p4">}</p>
+<p class="p4">}.fork;</p>
+<p class="p4">)</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4">a= ~files.collect{<span class="s2">|filename|</span> <span class="s2">SCMIRAudioFile</span>.newFromZ(<span class="s4">"/Users/nickcollins/Desktop/SCMIRTest/"</span>++(filename.splitext[0].basename)++<span class="s4">".scmirZ"</span>)}</p>
+<p class="p3"><br></p>
+<p class="p4">a[0].numframes</p>
+<p class="p4">a[1].numframes</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//test of global normalization processing</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//first run<span class="Apple-converted-space"> </span></p>
+<p class="p4">(</p>
+<p class="p9"><span class="s3">~files = [</span>"sounds/a11wlk01.wav"<span class="s3">, </span>"/data/audio/mirdata/pixiesivebeentired.wav"<span class="s3">,</span>"/data/audio/mirdata/Yellow Submarine.wav"<span class="s3">];<span class="Apple-converted-space"> </span></span></p>
+<p class="p4">~featureinfo= [[<span class="s2">MFCC</span>,13],[<span class="s2">Chromagram</span>,12]];<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p4"><span class="s6">{SCMIR</span>.findGlobalFeatureNorms(~files,~featureinfo); }.fork</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p4">)</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s2">SCMIR</span><span class="s3">.globalfeaturenorms </span>//in this case, will be minimums in first array, maximums in second</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//you can save this file for later reuse (assumes exactly same featureinfo settings, which is up to you to check)</p>
+<p class="p3"><br></p>
+<p class="p9"><span class="s2">SCMIR</span><span class="s3">.saveGlobalFeatureNorms(</span>"/Users/nickcollins/Desktop/testglobfeat.scmirZ"<span class="s3">);<span class="Apple-converted-space"> </span></span></p>
+<p class="p3"><br></p>
+<p class="p8">//recall</p>
+<p class="p9"><span class="s2">SCMIR</span><span class="s3">.loadGlobalFeatureNorms(</span>"/Users/nickcollins/Desktop/testglobfeat.scmirZ"<span class="s3">);<span class="Apple-converted-space"> </span></span></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//now to normalize individual files with respect to global normalization</p>
+<p class="p4">(</p>
+<p class="p4">~normed = ~files.collect{<span class="s2">|filename|</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s2">var</span> e;<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>e= <span class="s2">SCMIRAudioFile</span>(filename,~featureinfo);<span class="Apple-tab-span">	</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="s3"><span class="Apple-tab-span">	</span>e.extractFeatures(</span><span class="s2">true</span><span class="s3">, </span><span class="s2">true</span><span class="s3">); </span>//will use global normalization<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p4">}</p>
+<p class="p4">)</p>
+<p class="p3"><br></p>
+<p class="p8">//normalized SCMIRAudioFiles</p>
+<p class="p8">//find max and mins in different files, so did normalize with respect to larger corpus</p>
+<p class="p4">~normed[0].getFeatureTrail(0).minItem</p>
+<p class="p4">~normed[1].getFeatureTrail(0).minItem</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//compare standardization</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4">e = <span class="s6">SCMIRAudioFile</span>(<span class="s4">"sounds/a11wlk01.wav"</span>, [[<span class="s6">MFCC</span>, 13], [<span class="s6">Chromagram</span>, 12]], 1); //additional third argument non zero means standardize, not normalize</p>
+<p class="p3"><br></p>
+<p class="p4">e.extractFeatures();</p>
+<p class="p3"><br></p>
+<p class="p4">e.featuredata</p>
+<p class="p3"><br></p>
+<p class="p4">(</p>
+<p class="p4">for(0,24,{|j| <span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>var a;<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>a = e.getFeatureTrail(j);<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span>[a.minItem,a.maxItem].postln;</p>
+<p class="p3"><br></p>
+<p class="p4"><span class="Apple-tab-span">	</span>});<span class="Apple-converted-space"> </span></p>
+<p class="p4">)</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//graphing issues; by default, assumes 3 standard deviations either side of zero mean work out to 0.0 to 1.0 range</p>
+<p class="p3"><br></p>
+<p class="p4">e.plotFeatures(300,300,40);<span class="Apple-converted-space"> </span></p>
+<p class="p4">e.plotFeatures(300,300,40,true);<span class="Apple-converted-space"> </span></p>
+<p class="p10"><br></p>
+<p class="p10"><br></p>
+<p class="p4">b = e.similarityMatrix(2, 2);</p>
+<p class="p4">b.plot(5,6);</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4">b.matrix.minItem</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p8">//time domain features and comparison to perceptual loudness and pitch</p>
+<p class="p3"><br></p>
+<p class="p11"><span class="s3">e = </span><span class="s2">SCMIRAudioFile</span><span class="s3">(</span><span class="s4">"sounds/a11wlk01.wav"</span><span class="s3">, [</span>\ZCR<span class="s3">,</span>\RMS,\Loudness,\Tartini<span class="s3">]);</span></p>
+<p class="p3"><br></p>
+<p class="p4">e.extractFeatures()</p>
+<p class="p3"><br></p>
+<p class="p4">e.numfeatures</p>
+<p class="p3"><br></p>
+<p class="p4">e.featuredata</p>
+<p class="p3"><br></p>
+<p class="p8"><span class="s3">e.plotFeatures(300,300); </span>//will resample feature data to fit dimensions requested</p>
+<p class="p3"><br></p>
+<p class="p4">e.plotFeatures(400,600,40, true); <span class="s5">//line based plot</span></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p12"><br></p>
+<p class="p8">//test MP3 loading, and taking a section from the middle of the file<span class="Apple-converted-space"> </span></p>
+<p class="p12"><br></p>
+<p class="p8">//take 30 seconds at middle (defaults to extracting 10 MFCCs)</p>
+<p class="p13">(</p>
+<p class="p13">{</p>
+<p class="p9"><span class="s3">f = </span><span class="s2">SCMIRAudioFile</span><span class="s3">(</span>"/data/audio/mp3mixed/dj/dubstari.mp3"<span class="s3">,start:0.5,dur: 30.0);</span></p>
+<p class="p12"><br></p>
+<p class="p13">f.extractFeatures();<span class="Apple-converted-space"> </span></p>
+<p class="p12"><br></p>
+<p class="p13">}.fork;</p>
+<p class="p13">)</p>
+<p class="p12"><br></p>
+<p class="p13">f.numfeatures</p>
+<p class="p12"><br></p>
+<p class="p13">f.plotFeatures(300,300,40,<span class="s2">true</span>);<span class="Apple-converted-space"> </span></p>
+<p class="p12"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p12"><br></p>
+<p class="p8">//Chromagram Difference and summation between frames</p>
+<p class="p12"><br></p>
+<p class="p9"><span class="s3">e = </span><span class="s2">SCMIRAudioFile</span><span class="s3">(</span>"/data/teachingmaterials/electronicmusic/seminar/seminaraudio/MeanBeat_Amen_Loop.wav"<span class="s3">,[[</span><span class="s2">Chromagram</span><span class="s3">,12]]);</span></p>
+<p class="p12"><br></p>
+<p class="p13">e.extractFeatures()</p>
+<p class="p12"><br></p>
+<p class="p13">e.differentiateFeature(0,1)</p>
+<p class="p12"><br></p>
+<p class="p13">e.sumMultiFeature(0)</p>
+<p class="p12"><br></p>
+<p class="p13">e.featuredata</p>
+<p class="p12"><br></p>
+<p class="p13">e.numfeatures</p>
+<p class="p12"><br></p>
+<p class="p13">e.renormalize;<span class="Apple-converted-space"> </span></p>
+<p class="p12"><br></p>
+<p class="p13">e.plotFeatures(300,300,40,<span class="s2">true</span>);<span class="Apple-converted-space"> </span></p>
+<p class="p12"><br></p>
+<p class="p12"><br></p>
+<p class="p12"><br></p>
+<p class="p12"><br></p>
+<p class="p12"><br></p>
+<p class="p12"><br></p>
+<p class="p12"><br></p>
+<p class="p9"><span class="s3">e = </span><span class="s2">SCMIRAudioFile</span><span class="s3">(</span>"/data/teachingmaterials/electronicmusic/seminar/seminaraudio/MeanBeat_Amen_Loop.wav"<span class="s3">, [[</span><span class="s7">\Loudness</span><span class="s3">],[</span><span class="s7">\Transient</span><span class="s3">,0.7,0.2],[</span><span class="s7">\Transient</span><span class="s3">,0.1,0.05],[</span><span class="s7">\Transient</span><span class="s3">,0.1,0.0],[</span><span class="s7">\Transient</span><span class="s3">,0.9,0.0],[</span><span class="s7">\Transient</span><span class="s3">,0.2,0.01],[</span><span class="s7">\Onsets</span><span class="s3">,</span><span class="s7">\rcomplex</span><span class="s3">]]);</span></p>
+<p class="p12"><br></p>
+<p class="p13">e.extractFeatures()</p>
+<p class="p12"><br></p>
+<p class="p13">e.plotFeatures(300,300,40);<span class="Apple-converted-space"> </span></p>
+<p class="p12"><br></p>
+<p class="p13">e.differentiateFeature([0,1],0)</p>
+<p class="p12"><br></p>
+<p class="p13">e.plotFeatures(300,300,40);<span class="Apple-converted-space"> </span></p>
+<p class="p12"><br></p>
+<p class="p8"><span class="s3">e.plotFeatureTrail(0) </span>//difference of Loudness</p>
+<p class="p13">e.plotFeatures(400,600,40, <span class="s2">true</span>); <span class="s5">//line based plot</span></p>
+<p class="p12"><br></p>
+<p class="p12"><br></p>
+<p class="p12"><br></p>
+<p class="p12"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+</body>
+</html>

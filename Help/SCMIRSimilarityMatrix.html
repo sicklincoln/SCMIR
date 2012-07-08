@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.35">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #cd1713}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #102ac3}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #737373}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #102ac3}
+span.s3 {color: #000000}
+span.s4 {color: #cd1713}
+span.s5 {color: #737373}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>SCMIRSimilarityMatrix<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>Similarity matrix calculation and resources including plotting and DTW</b></p>
+<p class="p2"><br></p>
+<p class="p1">by Nick Collins.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1">An instance of the SCMIRSimilarityMatrix class calculates and stores a distance matrix over a single input sequence (self-similarity) or between two sequences. The sequences can be multi-dimensional feature vector sequences, though they must be in a flattened array format:</p>
+<p class="p1">[feature0 at time0, feature 1 at time 0, ... feature dimensions-1 at time 0, feature 0 at time 1, ...]</p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p1">Note that the cosine metric only gives non zero similarity values if the number of feature dimensions is greater than 1. Note also that the similarity value is 0.0 if two points are maximally close (hence, it is a distance matrix).<span class="Apple-converted-space"> </span></p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p1">The internal code operates on FloatArrays (due to interaction with external processing and need for RawArrays in file output and input), and auto conversion is imposed at input if required.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1">The dtw method returns [minimum path cost, best path] where the best path is a List of (x,y) co-ordinates into the matrix. Larger x is further along sequence1, larger y is further along the other sequence (sequence 1 again for self similarity, or a different sequence 2).<span class="Apple-converted-space">   </span></p>
+<p class="p2"><br></p>
+<p class="p1"><b>See also:</b> SCMIRAudioFile, SCMIR</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4"><b>Examples</b></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6">//self similarity demo</p>
+<p class="p5"><br></p>
+<p class="p7">a = <span class="s2">FloatArray</span>[0.05,0.1,0.5,0.8,1.2,1.4];<span class="Apple-converted-space"> </span></p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m = </span><span class="s2">SCMIRSimilarityMatrix</span><span class="s3">(1,a); </span>//1 dimensional data, stored in a</p>
+<p class="p5"><br></p>
+<p class="p7">m.sequence1 <span class="s4">//a</span></p>
+<p class="p7">m.sequence2 <span class="s4">//also a</span></p>
+<p class="p6"><span class="s3">m.self </span>//1 = self similarity matrix</p>
+<p class="p6"><span class="s3">m.columns </span>//size of a</p>
+<p class="p6"><span class="s3">m.rows<span class="Apple-tab-span">	</span></span>//also size of a</p>
+<p class="p7">m.dimensions<span class="Apple-tab-span">	</span><span class="s4">//1</span></p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m.calculate(1,1); </span>//create matrix of unit 1, metric 1 = Manhattan</p>
+<p class="p5"><br></p>
+<p class="p7">m.matrix</p>
+<p class="p5"><br></p>
+<p class="p7">m.plot(100);<span class="Apple-converted-space"> </span></p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m.dtw<span class="Apple-tab-span">	</span></span>//should get back diagonal as cheapest path</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6">//two sequences</p>
+<p class="p7">a = [0.0,0.1,0.5,0.8,1.2,1.4];<span class="Apple-converted-space"> </span></p>
+<p class="p7">b = [0.03,0.05,0.3,0.7,0.8,1.1,1.38,0.4,1.1];<span class="Apple-converted-space"> </span></p>
+<p class="p5"><br></p>
+<p class="p6">//comparison</p>
+<p class="p6"><span class="s3">m = </span><span class="s2">SCMIRSimilarityMatrix</span><span class="s3">(1,a,b); </span>//1 dimensional data, stored in a and b</p>
+<p class="p5"><br></p>
+<p class="p6">//note how order swapped since first array should have largest size</p>
+<p class="p6"><span class="s3">m.sequence1 </span>//converted to FloatArray internally (required for file writing for invoking calculation externals)</p>
+<p class="p6"><span class="s3">m.sequence2 </span>//converted to FloatArray internally (required for file writing for invoking calculation externals)</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m.calculate(1,1); </span>//create matrix, won't be square since a and b are different lengths</p>
+<p class="p5"><br></p>
+<p class="p7">m.matrix</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m.matrix.plot </span>//as linear array; order is d(a(0), b(0)), d(a(0, b(1))... d(a(1),b(0))...d(a(last),b(last))</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m.plot(100) </span>//built in matrix plotting, stretch factor of 10 here</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m.dtw; </span>//get best path and distance of the path</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6">//use with SCMIRAudioFile</p>
+<p class="p5"><br></p>
+<p class="p8"><span class="s3">e = </span>SCMIRAudioFile<span class="s3">(</span><span class="s5">"sounds/a11wlk01.wav"</span><span class="s3">, [[</span>MFCC<span class="s3">, 13], [</span>Chromagram<span class="s3">, 12]]);</span></p>
+<p class="p5"><br></p>
+<p class="p6">//shortcut versions also work, defaults will be applied for MFCC (10 coeffs) and Chromagram (12TET)</p>
+<p class="p6">//e = SCMIRAudioFile("/Applications/SuperCollider/SuperCollider3.4/sounds/a11wlk01.wav",[MFCC,Chromagram]);</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">e.extractFeatures(); </span>//wait for me to finish</p>
+<p class="p5"><br></p>
+<p class="p7">e.numframes</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m = e.similarityMatrix(1,0);<span class="Apple-converted-space">  </span></span>//m is an SCMIRSimilarityMatrix object</p>
+<p class="p5"><br></p>
+<p class="p7">m.matrix.size.sqrt <span class="s4">//184</span></p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m.plot(2) </span>//built in matrix plotting, stretch factor of 10 here</p>
+<p class="p5"><br></p>
+<p class="p7">a = m.dtw</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m.plot(2,path:a)<span class="Apple-tab-span">	</span></span>//plot with best dtw path<span class="Apple-converted-space"> </span></p>
+<p class="p5"><br></p>
+<p class="p7">m.reducedcolumns</p>
+<p class="p7">m.reducedrows</p>
+<p class="p5"><br></p>
+<p class="p7">m.matrix.postcs</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6">//comparison of two audio files</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p7">(</p>
+<p class="p9"><span class="s3">~files = [</span>"/data/audio/mirdata/pixiesivebeentired.wav"<span class="s3">,</span>"/data/audio/mirdata/Yellow Submarine.wav"<span class="s3">];<span class="Apple-converted-space"> </span></span></p>
+<p class="p5"><br></p>
+<p class="p7">~audio = ~files.collect{<span class="s2">|filename,i|</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span></p>
+<p class="p8"><span class="s3">e = </span>SCMIRAudioFile<span class="s3">(filename, [</span>MFCC<span class="s3">,</span>Loudness<span class="s3">]);</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span></p>
+<p class="p7">e.extractFeatures();</p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p7">};</p>
+<p class="p5"><br></p>
+<p class="p7">m = ~audio[0].similarityMatrix(40,0,other:~audio[1]);</p>
+<p class="p7">)</p>
+<p class="p5"><br></p>
+<p class="p7">~audio[0].numfeatures</p>
+<p class="p7">(~audio[0].numframes).div(40)</p>
+<p class="p7">(~audio[1].numframes).div(40)</p>
+<p class="p5"><br></p>
+<p class="p7">m.reducedcolumns <span class="s4">//194</span></p>
+<p class="p7">m.reducedrows<span class="Apple-tab-span">	</span><span class="s4">//172</span></p>
+<p class="p5"><br></p>
+<p class="p7">d = m.dtw</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m.plot(2,1, path:d)<span class="Apple-tab-span">	</span></span>//show path on the similarity matrix plot</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6">//very minimal test</p>
+<p class="p5"><br></p>
+<p class="p6">//SCMIR.setTempDir("/Users/nickcollins/Desktop/");<span class="Apple-converted-space"> </span></p>
+<p class="p5"><br></p>
+<p class="p7">a = <span class="s2">FloatArray</span>[0.05,0.1,0.9];<span class="Apple-converted-space"> </span></p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m = </span><span class="s2">SCMIRSimilarityMatrix</span><span class="s3">(1,a); </span>//1 dimensional data, stored in a</p>
+<p class="p5"><br></p>
+<p class="p7">m.calculate(1,2); <span class="s4">//create matrix</span></p>
+<p class="p5"><br></p>
+<p class="p7">m.matrix</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">d = m.dtw<span class="Apple-tab-span">	</span></span>//should get back diagonal as cheapest path</p>
+<p class="p5"><br></p>
+<p class="p7">m.plot(100,path:d)</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6">//check alternative options in similaritymatrix2 external</p>
+<p class="p5"><br></p>
+<p class="p7">a = <span class="s2">FloatArray</span>[0.05,0.1,0.9];<span class="Apple-converted-space"> </span></p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m = </span><span class="s2">SCMIRSimilarityMatrix</span><span class="s3">(1,a); </span>//1 dimensional data, stored in a</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m.calculate(1,2,0,0); </span>//create matrix, max within segments rather than mean</p>
+<p class="p5"><br></p>
+<p class="p7">m.matrix</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">d = m.dtw<span class="Apple-tab-span">	</span></span>//should get back diagonal as cheapest path</p>
+<p class="p5"><br></p>
+<p class="p7">m.plot(100,path:d)</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m.calculate(1,2,1,0); </span>//create matrix, max within segments rather than mean, post calculate (make large similarity matrix then reduce)</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m.matrix<span class="Apple-tab-span">	</span></span>//same results</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">d = m.dtw<span class="Apple-tab-span">	</span></span>//should get back diagonal as cheapest path</p>
+<p class="p5"><br></p>
+<p class="p7">m.plot(100,path:d)</p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p6">//check that post reduction also works on larger scale</p>
+<p class="p9"><span class="s3">e = </span><span class="s2">SCMIRAudioFile</span><span class="s3">(</span>"/Applications/SuperCollider/SuperCollider3.4/sounds/a11wlk01.wav"<span class="s3">, [[</span><span class="s2">MFCC</span><span class="s3">, 13], [</span><span class="s2">Chromagram</span><span class="s3">, 12]]);</span></p>
+<p class="p5"><br></p>
+<p class="p7">e.extractFeatures();</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m = e.similarityMatrix(2,0,1,0);<span class="Apple-converted-space">  </span></span>//m is an SCMIRSimilarityMatrix object</p>
+<p class="p5"><br></p>
+<p class="p7">m.matrix.size.sqrt <span class="s4">//92</span></p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m.plot(2) </span>//built in matrix plotting, stretch factor of 10 here</p>
+<p class="p5"><br></p>
+<p class="p7">a = m.dtw</p>
+<p class="p5"><br></p>
+<p class="p6"><span class="s3">m.plot(2,path:a)<span class="Apple-tab-span">	</span></span>//plot with best dtw path<span class="Apple-converted-space"> </span></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+<p class="p5"><br></p>
+</body>
+</html>

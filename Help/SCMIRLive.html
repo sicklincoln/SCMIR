@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.35">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 57.0px; text-indent: -57.0px; font: 14.0px Helvetica}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #cd1713}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #102ac3}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #737373}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #000000}
+span.s3 {color: #737373}
+span.s4 {color: #102ac3}
+span.s5 {color: #102bc3}
+span.s6 {color: #102ac2}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>SCMIRLive<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>Represents a live feature extractor for the SCMIR analysis system</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
+<p class="p2"><br></p>
+<p class="p1"><b>Inherits from: Object</b></p>
+<p class="p3"><br></p>
+<p class="p1">Run feature extraction and normalization live.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1"><b>See also:</b> SCMIR, SCMIRAudioFile</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p5"><b>Examples</b></p>
+<p class="p3"><br></p>
+<p class="p6"><br></p>
+<p class="p7">//extract features for a given file</p>
+<p class="p8"><span class="s2">e = </span>SCMIRAudioFile<span class="s2">(</span><span class="s3">"sounds/a11wlk01.wav"</span><span class="s2">, [[</span>MFCC<span class="s2">, 13], [</span>Chromagram<span class="s2">, 12]]);</span></p>
+<p class="p6"><br></p>
+<p class="p9">e.extractFeatures();</p>
+<p class="p6"><br></p>
+<p class="p7">//now convert to live feature extractor (in this case must have carried out feature extraction above to get normalisation data, see below for alternatives)</p>
+<p class="p8"><span class="s2">l = </span>SCMIRLive<span class="s2">(e)</span></p>
+<p class="p6"><br></p>
+<p class="p9">l.dump</p>
+<p class="p9">l.featureinfo</p>
+<p class="p9">l.normalizationinfo</p>
+<p class="p6"><br></p>
+<p class="p7">//create SynthDef for this feature set with normalization</p>
+<p class="p9">l.createSynthDef.add</p>
+<p class="p7">//save to disk SynthDef with own specified name, no normalization</p>
+<p class="p7">//l.createSynthDef(\SCMIRLiveownname,false).writeDefFile</p>
+<p class="p6"><br></p>
+<p class="p7"><span class="s2">l.createResponder({</span><span class="s4">arg</span><span class="s2"> input; input.postln }); </span>//create a language side responder for this feature extractor</p>
+<p class="p6"><br></p>
+<p class="p7">//run Synth with the SynthDef already added, input bus is 8, which is first audio input on machine</p>
+<p class="p9">a = l.run(8)</p>
+<p class="p6"><br></p>
+<p class="p9">l.synth</p>
+<p class="p6"><br></p>
+<p class="p9">l.removeResponder</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7">//store for future use (assumes saved SynthDef as well, or at least will createSynthDef on reload before live use</p>
+<p class="p10"><span class="s2">l.save(</span>"/tmp/scmirlive1.scmirZ"<span class="s2">);<span class="Apple-converted-space"> </span></span></p>
+<p class="p6"><br></p>
+<p class="p10"><span class="s2">l.load(</span>"/tmp/scmirlive1.scmirZ"<span class="s2">);<span class="Apple-converted-space"> </span></span></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p9">a = l.run(8)</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7">//using with global norms</p>
+<p class="p6"><br></p>
+<p class="p7">//calculate global norms</p>
+<p class="p11">(</p>
+<p class="p10"><span class="s2">~files = [</span>"sounds/a11wlk01.wav"<span class="s2">, </span>"/data/audio/mirdata/pixiesivebeentired.wav"<span class="s2">,</span>"/data/audio/mirdata/Yellow Submarine.wav"<span class="s2">];<span class="Apple-converted-space"> </span></span></p>
+<p class="p11">~featureinfo= [[<span class="s5">MFCC</span>,13],[<span class="s5">Chromagram</span>,12]];<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p11"><span class="s5">{SCMIR</span>.findGlobalFeatureNorms(~files,~featureinfo); }.fork</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p11">)</p>
+<p class="p3"><br></p>
+<p class="p7"><span class="s5">SCMIR</span><span class="s2">.globalfeaturenorms </span>//in this case, will be minimums in first array, maximums in second</p>
+<p class="p6"><br></p>
+<p class="p6"><br></p>
+<p class="p7">//no need to extract fresh features in this case</p>
+<p class="p8"><span class="s2">e = </span>SCMIRAudioFile<span class="s2">(</span><span class="s3">"sounds/a11wlk01.wav"</span><span class="s2">, [[</span>MFCC<span class="s2">, 13], [</span>Chromagram<span class="s2">, 12]]);</span></p>
+<p class="p6"><br></p>
+<p class="p7">//create SCMIRLive via this</p>
+<p class="p11">l = <span class="s6">SCMIRLive</span>(e, <span class="s5">SCMIR</span>.globalfeaturenorms)</p>
+<p class="p6"><br></p>
+<p class="p11">l.normalizationinfo</p>
+<p class="p6"><br></p>
+<p class="p11">l.createSynthDef.add</p>
+<p class="p3"><br></p>
+<p class="p7"><span class="s2">l.createResponder({</span><span class="s6">arg</span><span class="s2"> input; input.postln }); </span>//create a language side responder for this feature extractor</p>
+<p class="p3"><br></p>
+<p class="p7">//run Synth with the SynthDef already added, input bus is 8, which is first audio input on machine</p>
+<p class="p11">a = l.run(8)</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+</body>
+</html>
