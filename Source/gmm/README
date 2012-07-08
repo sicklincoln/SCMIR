@@ -4,7 +4,7 @@ libgslcblas
 libgsleigen
 libgslmatrix
 
-I used the universal 1.14 version of gsl for Mac, with the Xcode project included. 
+I used the universal 1.14 version of gsl for Mac.
 
 I also used the gmm-gmr project code: 
 http://sourceforge.net/projects/gmm-gmr/

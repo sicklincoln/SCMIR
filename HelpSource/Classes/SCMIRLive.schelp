@@ -1,0 +1,85 @@
+title:: SCMIRLive
+summary:: Represents a live feature extractor for the SCMIR analysis system
+categories:: SCMIR
+related:: Classes/SCMIRAudioFile, Classes/SCMIRSimilarityMatrix, Classes/SCMIR
+
+description::
+
+Run feature extraction and normalization live. 
+
+
+examples::
+
+code::
+
+//extract features for a given file
+e = SCMIRAudioFile("sounds/a11wlk01.wav", [[MFCC, 13], [Chromagram, 12]]);
+
+e.extractFeatures();
+
+//now convert to live feature extractor (in this case must have carried out feature extraction above to get normalisation data, see below for alternatives)
+l = SCMIRLive(e)
+
+l.dump
+l.featureinfo
+l.normalizationinfo
+
+//create SynthDef for this feature set with normalization
+l.createSynthDef.add
+//save to disk SynthDef with own specified name, no normalization
+//l.createSynthDef(\SCMIRLiveownname,false).writeDefFile
+
+l.createResponder({arg input; input.postln }); //create a language side responder for this feature extractor
+
+//run Synth with the SynthDef already added, input bus is 8, which is first audio input on machine
+a = l.run(8)
+
+l.synth
+
+l.removeResponder
+
+
+//store for future use (assumes saved SynthDef as well, or at least will createSynthDef on reload before live use
+l.save("/tmp/scmirlive1.scmirZ"); 
+
+l.load("/tmp/scmirlive1.scmirZ"); 
+
+
+a = l.run(8)
+
+
+
+
+
+//using with global norms
+
+//calculate global norms
+(
+~files = ["sounds/a11wlk01.wav", "/data/audio/mirdata/pixiesivebeentired.wav","/data/audio/mirdata/Yellow Submarine.wav"]; 
+~featureinfo= [[MFCC,13],[Chromagram,12]]; 
+
+{SCMIR.findGlobalFeatureNorms(~files,~featureinfo); }.fork
+	
+)
+
+SCMIR.globalfeaturenorms //in this case, will be minimums in first array, maximums in second
+
+
+//no need to extract fresh features in this case
+e = SCMIRAudioFile("sounds/a11wlk01.wav", [[MFCC, 13], [Chromagram, 12]]);
+
+//create SCMIRLive via this
+l = SCMIRLive(e, SCMIR.globalfeaturenorms)
+
+l.normalizationinfo
+
+l.createSynthDef.add
+
+l.createResponder({arg input; input.postln }); //create a language side responder for this feature extractor
+
+//run Synth with the SynthDef already added, input bus is 8, which is first audio input on machine
+a = l.run(8)
+
+
+
+::
