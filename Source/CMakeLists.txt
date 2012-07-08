@@ -1,0 +1,18 @@
+cmake_minimum_required (VERSION 2.6)
+project (SCMIRexecutables)
+
+add_executable(noveltycurve noveltycurve/noveltycurve.cpp)
+
+add_executable(similaritymatrix similaritymatrix/similarity.cpp)
+
+#set to locations of your gsl headers and library folders 
+set(LIBGSL /Users/nickcollins/Desktop/tosort/gsl_universal_1.14/libs)
+include_directories(/Users/nickcollins/Desktop/tosort/gsl_universal_1.14/gsl)
+
+file(GLOB gmmSources gmm/*cpp)
+add_executable(gmm ${gmmSources})
+
+target_link_libraries(gmm ${LIBGSL}/libgsl.a ${LIBGSL}/libgslcblas.a ${LIBGSL}/libgsleigen.a ${LIBGSL}/libgslmatrix.a)
+
+file(GLOB nnSources NeuralNet/*cpp)
+add_executable(NeuralNet ${nnSources})
