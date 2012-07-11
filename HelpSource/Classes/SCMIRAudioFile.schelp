@@ -24,15 +24,12 @@ Assumptions/notes:
 -Version 0.4 introduces onset detection, and arbitrary guide segmentations for feature accumulation, via gatherFeaturesBySegments (the onsets specific variant is gatherFeaturesByOnsets). 
 -Note that for the cosine metric, the default for similarity matrices, the value is always 0.0 for a single feature feature vector, so we're assuming feature vectors have multiple entries in general. Manhattan and Euclidean metrics will be fine, however.  
 
-
-examples::
-
 code::
 
-e = SCMIRAudioFile("sounds/a11wlk01.wav", [[MFCC, 13], [Chromagram, 12]]);
+e = SCMIRAudioFile(Platform.resourceDir +/+ "sounds/a11wlk01.wav", [[MFCC, 13], [Chromagram, 12]]);
 
 //shortcut versions also work, defaults will be applied for MFCC (10 coeffs) and Chromagram (12TET)
-//e = SCMIRAudioFile("sounds/a11wlk01.wav",[MFCC,Chromagram]);
+//e = SCMIRAudioFile(Platform.resourceDir +/+"sounds/a11wlk01.wav",[MFCC,Chromagram]);
 
 e.extractFeatures()
 
@@ -125,7 +122,7 @@ a.plot(4);
 
 
 
-e = SCMIRAudioFile("sounds/a11wlk01.wav", [Loudness]);
+e = SCMIRAudioFile(Platform.resourceDir +/+ "sounds/a11wlk01.wav", [Loudness]);
 
 e.extractFeatures(); //wait for me to finish
 
@@ -152,7 +149,7 @@ e.sourcepath
 
 //test more features:
 
-e = SCMIRAudioFile("sounds/a11wlk01.wav", [[Loudness],[SpecCentroid],[SpecPcile, 0.95],[SpecPcile, 0.8],[SpecFlatness],[FFTCrest],[FFTCrest, 0, 2000], [FFTCrest, 2000, 10000],[FFTSpread],[FFTSlope],[SensoryDissonance]]);
+e = SCMIRAudioFile(Platform.resourceDir +/+ "sounds/a11wlk01.wav", [[Loudness],[SpecCentroid],[SpecPcile, 0.95],[SpecPcile, 0.8],[SpecFlatness],[FFTCrest],[FFTCrest, 0, 2000], [FFTCrest, 2000, 10000],[FFTSpread],[FFTSlope],[SensoryDissonance]]);
 
 e.extractFeatures(); //wait for me to finish
 
@@ -234,7 +231,7 @@ l
 
 
 f = SCMIRAudioFile("/data/audio/mirdata/pixiesivebeentired.wav", [[MFCC, 13], [Chromagram, 12]]);
-//f = SCMIRAudioFile("sounds/a11wlk01.wav", [[MFCC, 13], [Chromagram, 12]]);
+//f = SCMIRAudioFile(Platform.resourceDir +/+ "sounds/a11wlk01.wav", [[MFCC, 13], [Chromagram, 12]]);
 
 (
 f.extractFeatures(); 
@@ -305,7 +302,7 @@ f.featuredata.plot
 
 SCMIR.setTempDir("/Users/nickcollins/Desktop/SCMIRTest") //all saved files will go here
 
-~files = ["sounds/a11wlk01.wav", "/data/audio/mirdata/pixiesivebeentired.wav"]; 
+~files = [Platform.resourceDir +/+"sounds/a11wlk01.wav", "/data/audio/mirdata/pixiesivebeentired.wav"]; 
 
 //batch process; within Routine to get progress feedback as it calculates (would be slightly faster without, but calculation beachball locking sclang may seem alarming)
 (	
@@ -339,7 +336,7 @@ a[1].numframes
 
 //first run 
 (
-~files = ["sounds/a11wlk01.wav", "/data/audio/mirdata/pixiesivebeentired.wav","/data/audio/mirdata/Yellow Submarine.wav"]; 
+~files = [Platform.resourceDir +/+ "sounds/a11wlk01.wav", "/data/audio/mirdata/pixiesivebeentired.wav","/data/audio/mirdata/Yellow Submarine.wav"]; 
 ~featureinfo= [[MFCC,13],[Chromagram,12]]; 
 
 {SCMIR.findGlobalFeatureNorms(~files,~featureinfo); }.fork
@@ -381,7 +378,7 @@ SCMIR.loadGlobalFeatureNorms("/Users/nickcollins/Desktop/testglobfeat.scmirZ");
 //compare standardization
 
 
-e = SCMIRAudioFile("sounds/a11wlk01.wav", [[MFCC, 13], [Chromagram, 12]], 1); //additional third argument non zero means standardize, not normalize
+e = SCMIRAudioFile(Platform.resourceDir +/+ "sounds/a11wlk01.wav", [[MFCC, 13], [Chromagram, 12]], 1); //additional third argument non zero means standardize, not normalize
 
 e.extractFeatures();
 
@@ -415,7 +412,7 @@ b.matrix.minItem
 
 //time domain features and comparison to perceptual loudness and pitch
 
-e = SCMIRAudioFile("sounds/a11wlk01.wav", [\ZCR,\RMS,\Loudness,\Tartini]);
+e = SCMIRAudioFile(Platform.resourceDir +/+ "sounds/a11wlk01.wav", [\ZCR,\RMS,\Loudness,\Tartini]);
 
 e.extractFeatures()
 
@@ -488,3 +485,10 @@ e.plotFeatures(400,600,40, true); //line based plot
 
 
 ::
+
+
+
+
+
+examples::
+

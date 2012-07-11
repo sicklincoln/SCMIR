@@ -11,6 +11,7 @@ SCMIR {
 	classvar <executabledirectory;  
 	classvar <globalfeaturenorms; 
 	classvar <>lamelocation; 
+	classvar <>nrtoutputfilename; 
 		 
 	*initClass { 
 			 
@@ -30,6 +31,14 @@ SCMIR {
 		SCMIR.initGlobalFeatureNorms; 
 		
 		lamelocation = "/usr/local/bin/lame";
+		
+		nrtoutputfilename = "/dev/null"; 
+		
+		//if no unix filenames support
+		if(thisProcess.platform.name.class == \windows) {
+			nrtoutputfilename = "NRToutput";	
+		};
+
 		
 	} 
 	
