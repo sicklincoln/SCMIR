@@ -4,6 +4,8 @@
 
 
 #include <iostream>
+#include <cstdio>
+#include <cstdlib>
 
 int main (int argc, char * const argv[]) {
     // insert code here...

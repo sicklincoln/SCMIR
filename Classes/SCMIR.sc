@@ -23,7 +23,16 @@ SCMIR {
 		framerate = samplingrate/framehop; 
 		hoptime = framerate.reciprocal; 
 		
-		executabledirectory = SCMIR.filenameSymbol.asString.dirname.escapeChar($ )++"/scmirexec/";  
+//		if (( Main.scVersionMajor == 3) && (Main.scVersionMinor<5)) {
+//			executabledirectory = SCMIR.filenameSymbol.asString.dirname.escapeChar($ )++"/scmirexec/";  
+//		
+//		} 
+
+		//used to be packaged with scmirexec in classes directory, no longer
+		executabledirectory = SCMIR.filenameSymbol.asString.dirname.escapeChar($ )++"/../scmirexec/";  
+		
+		
+
 		//tempdir = SCMIR.filenameSymbol.asString.dirname++"/scmirtemp/";  
 		
 		tempdir = "/tmp/";	//user should always have write permission here? 

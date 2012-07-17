@@ -21,6 +21,16 @@ NeuralNet {
 	
 	classvar <>pathToNeuralNetBinary = "/usr/local/bin/";
 	
+	//added for SCMIR compatibility
+	*initClass {
+	
+		Class.initClassTree(SCMIR);
+
+		pathToNeuralNetBinary = SCMIR.executabledirectory; 
+			
+	}
+	
+	
 	*new {arg nin, nhidden, nout, learningrate=0.05, initweight=0.05; 
 	 	^super.newCopyArgs(nin, nhidden, nout, learningrate).initNeuralNet(initweight);
 	 }

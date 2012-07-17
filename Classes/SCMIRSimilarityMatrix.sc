@@ -127,7 +127,7 @@ SCMIRSimilarityMatrix {
 		file.close; 
 		
 		//call auxilliary program
-		temp = SCMIR.executabledirectory++"similaritymatrix2" + metric + unit + prepost + reductiontype + self + outputfilename + inputfilename; 
+		temp = SCMIR.executabledirectory++"similaritymatrix" + metric + unit + prepost + reductiontype + self + outputfilename + inputfilename; 
 		
 		//"similaritymatrix2output"+ "similaritymatrix2input"; 
 		//temp = SCMIR.executabledirectory++"similaritymatrix2" + metric + unit + prepost + reductiontype + self + (tempdir++"similaritymatrix2output")+ (tempdir++"similaritymatrix2input"); 

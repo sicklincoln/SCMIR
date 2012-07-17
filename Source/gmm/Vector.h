@@ -10,6 +10,7 @@
 #include "Macros.h"
 #include <math.h>
 #include <iostream>
+#include <stdlib.h>
 
 #ifndef NULL
 #define NULL 0

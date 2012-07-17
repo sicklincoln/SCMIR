@@ -6,8 +6,8 @@ http://www.sussex.ac.uk/Users/nc81/index.html
 
 For SuperCollider 3, all code under GNU GPL 3 license, see COPYING file. 
 
-Tested extensively under SC3.4.4 on OS X 
-Seems to work fine on 3.5, no schelp support yet.
+Version 0.9 tested on SC 3.5
+Version up to 0.8 tested extensively under SC3.4.4 on OS X 
 
 Installation: 
 Put the folder SCMIRExtensions in your extensions directory. If you need hints on how to do that, see the [Using-Extensions] help file in SuperCollider (also linked in Main Help)
@@ -17,10 +17,25 @@ Note:
 There is a small bug in the SC MFCC code in SuperCollider 3.4. Fixed in developer core and for later versions. If you are on 3.4 and have source files with perfect noise floor of 0.0 values, the MFCC then leads to infs, messing up normalization. Mac Intel build of MachineListening plugins included as a drop in replacement for those who this is an issue for (swap the plugin in your plugins folder in the app directory). 
 
 
-
-
-
 Announcements: 
+
+
+version 0.9
+
+Latest alpha release of SCMIR. 
+
+SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis; version 0.9
+new additions and changes: 
+
+Compatibility for SC 3.5 including new schelp system
+SCMIR plugins now separately in sc3-plugins; pre-built plugins included in package for Mac
+Miscellaneous bug fixes and refinements
+Extra examples
+
+http://www.sussex.ac.uk/Users/nc81/code.html
+http://www.sussex.ac.uk/Users/nc81/code/SCMIR.zip
+
+
 
 version 0.8
 
