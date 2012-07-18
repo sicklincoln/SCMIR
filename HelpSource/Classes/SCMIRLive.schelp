@@ -13,7 +13,7 @@ examples::
 code::
 
 //extract features for a given file
-e = SCMIRAudioFile("sounds/a11wlk01.wav", [[MFCC, 13], [Chromagram, 12]]);
+e = SCMIRAudioFile(Platform.resourceDir +/+ "sounds/a11wlk01.wav", [[MFCC, 13], [Chromagram, 12]]);
 
 e.extractFeatures();
 
@@ -47,6 +47,8 @@ l.load("/tmp/scmirlive1.scmirZ");
 
 a = l.run(8)
 
+//short cut creation 
+l = SCMIRLive.newFromFile("/tmp/scmirlive1.scmirZ"); 
 
 
 
