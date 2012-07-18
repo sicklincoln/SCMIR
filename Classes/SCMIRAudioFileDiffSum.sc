@@ -1,4 +1,4 @@
-//experimental code for differences and 
+//experimental code for differences and sums over multifeatures
 
 + SCMIRAudioFile {  
 	  
