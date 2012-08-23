@@ -1,23 +1,34 @@
 README
 
-SuperCollider Music Information Retrieval (SCMIR) library version 0.8
+SuperCollider Music Information Retrieval (SCMIR) library version 0.9
 by Nick Collins
 http://www.sussex.ac.uk/Users/nc81/index.html
 
 For SuperCollider 3, all code under GNU GPL 3 license, see COPYING file. 
 
-Version 0.9 tested on SC 3.5
+Version 0.9+ tested on SC 3.5
 Version up to 0.8 tested extensively under SC3.4.4 on OS X 
 
 Installation: 
 Put the folder SCMIRExtensions in your extensions directory. If you need hints on how to do that, see the [Using-Extensions] help file in SuperCollider (also linked in Main Help)
 
+Compilation: 
+You only need to compile things if you are on Linux, or have a desire to change from the precompiled executables for Mac. 
+See the InstallMac file for instructions for Mac. 
+See the InstallLinux file for additional instructions for Linux from Martin Marier. 
 
 Note: 
 There is a small bug in the SC MFCC code in SuperCollider 3.4. Fixed in developer core and for later versions. If you are on 3.4 and have source files with perfect noise floor of 0.0 values, the MFCC then leads to infs, messing up normalization. Mac Intel build of MachineListening plugins included as a drop in replacement for those who this is an issue for (swap the plugin in your plugins folder in the app directory). 
 
 
-Announcements: 
+Change Log and Announcements: 
+
+
+0.91 
+
+Small fixes for Linux compatibility (thanks Martin Marier): 
+NRTanalysis OSC file now uses temp directory location to avoid permissions problem
+Avoid OS X specific SCWindow, SCUserView, use generic windowing classes
 
 
 version 0.9
@@ -30,6 +41,7 @@ new additions and changes:
 Compatibility for SC 3.5 including new schelp system
 SCMIR plugins now separately in sc3-plugins; pre-built plugins included in package for Mac
 Miscellaneous bug fixes and refinements
+CMake for building executables, also includes NeuralNet class
 Extra examples
 
 http://www.sussex.ac.uk/Users/nc81/code.html

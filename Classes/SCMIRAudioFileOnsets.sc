@@ -72,7 +72,7 @@
 		 
 		//Score.recordNRT(score, "NRTanalysis", "NRToutput", nil,44100, "WAV", "int16", serveroptions); // synthesize       
 		//SCMIR.processWait("scsynth");      
-		Score.recordNRTSCMIR(score, "NRTanalysis",SCMIR.nrtoutputfilename, nil,44100, "WAV", "int16", serveroptions); // synthesize
+		Score.recordNRTSCMIR(score,SCMIR.nrtanalysisfilename,SCMIR.nrtoutputfilename, nil,44100, "WAV", "int16", serveroptions); // synthesize
 		  
 		//LOAD FEATURES    
 		//Have to be careful; Little Endian is standard for Intel processors    

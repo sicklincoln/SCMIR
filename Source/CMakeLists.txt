@@ -14,7 +14,8 @@ include_directories(/Users/nickcollins/Desktop/tosort/gsl_universal_1.14/gsl)
 file(GLOB gmmSources gmm/*cpp)
 add_executable(gmm ${gmmSources})
 
-target_link_libraries(gmm ${LIBGSL}/libgsl.a ${LIBGSL}/libgslcblas.a ${LIBGSL}/libgsleigen.a ${LIBGSL}/libgslmatrix.a)
+target_link_libraries(gmm ${LIBGSL}/libgsl.a ${LIBGSL}/libgslcblas.a)
+#target_link_libraries(gmm ${LIBGSL}/libgsl.a ${LIBGSL}/libgslcblas.a ${LIBGSL}/libgsleigen.a ${LIBGSL}/libgslmatrix.a)
 
 file(GLOB nnSources NeuralNet/*cpp)
 add_executable(NeuralNet ${nnSources})

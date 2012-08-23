@@ -216,11 +216,11 @@ SCMIRSimilarityMatrix {
 		//just need path, not [score, path]
 		if(path.notNil){ if(path.size==2){path = path[1];}};
 		
-		window = SCWindow("Similarity matrix", Rect(100,100,totalx,totaly));
+		window = Window("Similarity matrix", Rect(100,100,totalx,totaly));
 		 
 		window.view.background_(background); 
 		 
-		uview = SCUserView(window, window.view.bounds).focusColor_(Color.clear); 
+		uview = UserView(window, window.view.bounds).focusColor_(Color.clear); 
  
  		xaxisy = totaly- border; 
  		origin = border@xaxisy;

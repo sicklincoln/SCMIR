@@ -505,7 +505,8 @@ SCMIRAudioFile {
 		//"NRTanalysis.wav"     
 		//issue with Score under 3.4 that it doesn't accept a nil argument for output?    
 		
-		Score.recordNRTSCMIR(score, "NRTanalysis",SCMIR.nrtoutputfilename, nil,44100, "WAV", "int16", serveroptions); // synthesize   
+		//had oscFile location as "NRTanalysis", doesn't work on Linux due to write permissions 
+		Score.recordNRTSCMIR(score,SCMIR.nrtanalysisfilename,SCMIR.nrtoutputfilename, nil,44100, "WAV", "int16", serveroptions); // synthesize   
 		//Score.recordNRT(score, "NRTanalysis", "NRToutput", nil,44100, "WAV", "int16", serveroptions); // synthesize  
 		  		
 		//SCMIR.processWait("scsynth");    

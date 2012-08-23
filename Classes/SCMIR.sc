@@ -12,6 +12,7 @@ SCMIR {
 	classvar <globalfeaturenorms; 
 	classvar <>lamelocation; 
 	classvar <>nrtoutputfilename; 
+	classvar <>nrtanalysisfilename; 
 		 
 	*initClass { 
 			 
@@ -42,6 +43,8 @@ SCMIR {
 		lamelocation = "/usr/local/bin/lame";
 		
 		nrtoutputfilename = "/dev/null"; 
+		nrtanalysisfilename = tempdir++"NRTanalysis"; 
+		
 		
 		//if no unix filenames support
 		if(thisProcess.platform.name.class == \windows) {

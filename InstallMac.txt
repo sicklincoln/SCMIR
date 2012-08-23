@@ -1,0 +1,15 @@
+Installation on Mac: 
+
+Put the folder SCMIRExtensions in your extensions directory. If you need hints on how to do that, see the [Using-Extensions] help file in SuperCollider (also linked in Main Help)
+
+Compilation: Whilst pre-compiled executables for Mac are provided, you can compile the executables yourself using CMake. 
+
+If you don't have Cmake installed, you can get it from MacPorts, for example. 
+
+
+cd /path/to/SCMIR/Source
+  mkdir build
+  cd build
+  cmake -DCMAKE_OSX_ARCHITECTURES='i386;x86_64' .. 
+  make
+  make install

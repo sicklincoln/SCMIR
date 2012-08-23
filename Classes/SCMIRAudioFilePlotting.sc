@@ -119,11 +119,11 @@
 		//draw in new window with UserView and Pen  
 		  
 			 
-		window = SCWindow("Feature plot for "++basename, Rect(100,100,xsize,ysize));
+		window = Window("Feature plot for "++basename, Rect(100,100,xsize,ysize));
 		 
 		window.view.background_(background); 
 		 
-		uview = SCUserView(window, window.view.bounds).focusColor_(Color.clear); 
+		uview = UserView(window, window.view.bounds).focusColor_(Color.clear); 
  
  		halfborderx= borderx.div(2); 
  		halfbordery= bordery.div(2); 
