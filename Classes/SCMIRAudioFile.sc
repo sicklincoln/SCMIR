@@ -216,6 +216,10 @@ SCMIRAudioFile {
 				if((val2[0]==Chromagram) && (val2.size==1),{val2 = [Chromagram,12] });
 			}; 
 			
+			if(\SpectralEntropy.asClass.notNil) {
+				if((val2[0]==SpectralEntropy) && (val2.size==1),{val2 = [SpectralEntropy,1] });
+			}; 
+			
 			//this not supported due to check requiring user to have PolyPitch
 			
 			if(\PolyPitch.asClass.notNil) {
@@ -223,7 +227,11 @@ SCMIRAudioFile {
 			};
 			
 			if((val2[0]==\MFCC) && (val2.size==1),{val2 = [MFCC,10] });
+			
 			if((val2[0]==\Chromagram) && (val2.size==1),{val2 = [Chromagram,12] });
+			
+			if((val2[0]==\SpectralEntropy) && (val2.size==1),{val2 = [SpectralEntropy,1] });
+			
 			if((val2[0]==\PolyPitch) && (val2.size==1),{val2 = [PolyPitch,4] }); 
 			 
 			 
@@ -257,6 +265,10 @@ SCMIRAudioFile {
 				//numchroma= featuregroup[2];    
 				numfeatures = numfeatures +  featuregroup[1]; //numchroma;     
 			}, 
+			\SpectralEntropy,{    
+				   
+				numfeatures = numfeatures +  featuregroup[1];     
+			},
 			\Tartini,{    
 				  
 				numfeatures = numfeatures +  2;     
@@ -328,6 +340,10 @@ SCMIRAudioFile {
 					  
 					Chromagram.kr(chromafft,4096,featuregroup[1]);    
 				}, 
+				\SpectralEntropy,{    
+					  
+					SpectralEntropy.kr(specfft,2048,featuregroup[1]);    
+				},
 				\Tartini, {Tartini.kr(input, 0.93, 2048, 0, 2048-featurehop) },
 				\PolyPitch,{PolyPitch.kr(input,featuregroup[1])},
 				\Loudness, {Loudness.kr(mfccfft) },
@@ -606,6 +622,10 @@ SCMIRAudioFile {
 				numberlinked = featurenow[1]; 
 			},
 			\Chromagram,{
+				
+				numberlinked = featurenow[1];
+			},
+			\SpectralEntropy,{
 				
 				numberlinked = featurenow[1];
 			},

@@ -174,8 +174,16 @@ SCMIR {
 			
 			if(scorerender) {
 				//safety first, file not being written out quickly enough
-				0.2.wait;	
+				1.0.wait;	
 			};
+			
+//unworkable since blocks SC even if within separate thread		
+//		if(scorerender) {
+//			systemCmd(command);	
+//		} {	
+//			SCMIR.waitOnUnixCmd(command, limit);
+//			
+//		}; 
 				
 		} {
 		

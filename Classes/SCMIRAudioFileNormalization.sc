@@ -204,6 +204,12 @@
 				
 				numberlinked = featurenow[1];
 			},
+			\SpectralEntropy,{
+				
+				//numberlinked = featurenow[1];
+				//don't inter-link by default
+				numfeaturesnow = featurenow[1]; 
+			},
 			\Tartini,{
 				numfeaturesnow = 2; 
 			},
@@ -299,7 +305,7 @@
 			  
 			normfeatures = 1;     
 			  
-			if((featurenow[0]==MFCC) or:(featurenow[0]==Chromagram)) {  
+			if((featurenow[0]==MFCC) || (featurenow[0]==Chromagram) || (featurenow[0]==SpectralEntropy)) {  
 				  
 				normfeatures = featurenow[2];   
 				  
