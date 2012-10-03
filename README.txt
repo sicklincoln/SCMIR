@@ -24,6 +24,12 @@ There is a small bug in the SC MFCC code in SuperCollider 3.4. Fixed in develope
 Change Log and Announcements: 
 
 
+
+0.92
+Fix for recurrent NRT calculation problem for SC 3.5 and later
+Added SpectralEntropy UGen
+
+
 0.91 
 
 Small fixes for Linux compatibility (thanks Martin Marier): 

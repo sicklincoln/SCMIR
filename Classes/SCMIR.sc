@@ -168,13 +168,16 @@ SCMIR {
 	}
 	*external {|command, scorerender=false, limit=2000| 
 		
+		//command.postln;
+		
+		
 		if(thisThread.class==Routine) {
 			
 		SCMIR.waitOnUnixCmd(command, limit);
 			
 			if(scorerender) {
 				//safety first, file not being written out quickly enough
-				1.0.wait;	
+				0.1.wait;	
 			};
 			
 //unworkable since blocks SC even if within separate thread		
@@ -249,8 +252,15 @@ SCMIR {
 		var checkstring,checkreturn; 
 		var processname = command.split($ )[0]; //assumption here if piping, but will do for now
 		
+		//[command.class, processname.class, processname=="exec"].postln;
+		
+		//missing scsynth invocations because exec command used with scsynth as second argument!
+		if (processname == "exec" && (command.contains("scsynth"))) {processname = "scsynth"}; 
+		
 		//"wait here!".postln;
 		ps = command.unixCmd;
+
+		//[\pscheck,ps,processname,command].postln;
 
 		//bigger wait safer here, since can take a moment to establish new thread with command running, pid seen by system; don't want a false recording of process finished when it hasn't started! 
 		//0.05.wait;
@@ -272,6 +282,9 @@ SCMIR {
 			//[checkreturn,checkreturn.contains(command), checkreturn.split($\n)].postln;
 			
 			if(count%10==0,{("SCMIR: calculation running for"+(count.div(10))+"seconds").postln});      
+			//("SCMIR: calculation running for"+(count)+"tenth of seconds").postln;      
+			
+			//[checkreturn,processname].postln;
 			
 			  //(checkreturn.split($\n).size)>3
 			(checkreturn.contains(processname)) and: {(count = count+1) <limit }  
