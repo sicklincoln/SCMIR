@@ -317,7 +317,7 @@ SCMIRAudioFile {
 			onsetfft = FFT(LocalBuf(fftsizeonset,1),input,1); //will be smaller to start with
 			};   
 			  
-			  
+			//LocalBuf so no issue with FFT buffer number being 0 and ineffective trigger  
 			trig=chromafft;     
 			  
 			features= [];     

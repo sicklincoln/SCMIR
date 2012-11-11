@@ -2,8 +2,8 @@
 
 + SCMIRAudioFile {
 	
-	
-	resolveMP3 {|inputfilename, usehash=false|
+	//nonunique added to save disk space when working over a big corpus, only creates one wav at a time
+	resolveMP3 {|inputfilename, usehash=false, nonunique=true|
 
 	//"/tmp/
 	var outputfilename;
@@ -15,6 +15,10 @@
 	
 	if(usehash) {
 		outputfilename = SCMIR.tempdir ++ "sc3mp3read-" ++ (this.hash) ++ ".wav";
+	};
+	
+	if(nonunique) {
+	outputfilename = SCMIR.tempdir ++ "conversionfrommp3" ++ ".wav";
 	};
 	
 	//outputfilename = SCMIR.tempdir ++ "sc3mp3read-" ++ (if(unique,{this.hash},{"temp"})) ++ ".wav";
