@@ -109,6 +109,33 @@ PPMC {
 		^elements.wchoose(counts/(counts.sum));  
 	} 
 		 
+		
+	generateN {|n, startingpoint, contextsize = 3| 			
+		var lastvals = List[]; 
+		var b; 
+		var temp; 
+		
+		startingpoint = startingpoint??{[this.generate()]}; 
+		
+		b  = Array.fill(n,{
+			
+			var nextval = this.generate(lastvals.reverse); 
+			
+			if(lastvals.size<contextsize) {lastvals.addFirst(nextval);} {
+				
+				lastvals.addFirst(nextval); 
+				lastvals.pop; 
+				
+				};
+			
+			nextval;
+		});
+			
+		^b
+		
+		
+	}	
+		
 		 
 	//use context up to maxorder size to find predicted next symbol according to PPM model 
 	generate {|testseq|   
