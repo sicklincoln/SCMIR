@@ -71,6 +71,18 @@ h = HMM(13,10)
 
 
 
+(
+{
+	h.probability({10.rand}!10).postln;
+}.fork;
+)
+
+(
+{
+	h.probability(1!10).postln;
+}.fork;
+)
+
 
 ::
 

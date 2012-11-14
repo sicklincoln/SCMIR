@@ -1,9 +1,3 @@
-//integrates gmm-gmr 
-//Copyright (c) 2008 Florent D'halluin , Sylvain Calinon, 
-//LASA Lab, EPFL, CH-1015 Lausanne, Switzerland, 
-//http://www.calinon.ch, http://lasa.epfl.ch
-//The program is free for non-commercial academic use. 
-
 //This code is part of an extension set for SuperCollider 3 (http://supercollider.sourceforge.net/). We follow the same license terms for SuperCollider 3, releasing under GNU GPL 3 
 //all non-GHMM code here by Nick Collins http://www.cogs.susx.ac.uk/users/nc81/index.html
 //GHMM code from http://home.gna.org/dhmm/ and by Daniel Roggen, modified BSD, license at top of the dhmm.h and .cpp files
@@ -24,6 +18,10 @@
 
 //mode 2 most likely state sequence given observation sequence:
 //2, model filename, input filename, output filename 
+
+//mode 3 observation sequence probability 
+//3, model filename, input filename, output filename 
+
 
 //can also calculate probability of a given state sequence; may need to pass a set of them, to find most likely
 
@@ -234,12 +232,47 @@ int main (int argc, char * const argv[]) {
             
         }
         
-		//std::cout << "\n " << argv[3] << " "; 
-		//fwrite(&minindex, sizeof(int), 1, fpoutput); 
-		
-		//fwrite(probs, sizeof(float), numstates, fpoutput); 
-		
-		fclose(fpoutput); 
+    }
+        
+        else if (calltype ==3) {
+            
+            
+            printf("motherfucker/n"); 
+            
+            hmm = new DHMM(1,1); 
+            
+            hmm->Load(argv[2]);	
+            
+            FILE * fpinput;
+            
+            fpinput = fopen(argv[3], "rb");
+            
+            int seqlength; 
+            
+            fread(&seqlength, sizeof(int), 1, fpinput);
+            
+            unsigned int * pint = new unsigned int[seqlength]; 
+            
+            fread(pint, sizeof(unsigned int), seqlength, fpinput);
+            
+            vector<unsigned int> vec; 
+            
+            vec.assign(pint, pint + seqlength);
+            
+            delete [] pint; 
+            
+            fclose(fpinput);
+            
+            //typedef vector<Symbol> Observation;
+            
+            //or should be log prob? 
+            double prob = hmm->GetObservationSequenceProbability(vec);
+             
+            FILE * fpoutput = fopen(argv[4], "wb");
+
+            fwrite(&prob, sizeof(double), 1, fpoutput);
+             
+			fclose(fpoutput); 
 		
 	}
 	
