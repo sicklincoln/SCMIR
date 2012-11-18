@@ -179,14 +179,19 @@
 			//how many frames fit in?  
 			framenow = (starttime/timeperframe).roundUp;  
 			framenext =  (endtime/timeperframe).asInteger; //rounds down  
+				
+			if(framenext >= numframes) {
+				
+				framenext = numframes - 1;  
+			};	
 				 
 			if(framenext<framenow) {framenext= framenow;};  
 				 
-			if((framenow >= numframes) || (framenext >= numframes)) { 
+			if(framenow >= numframes) { 
 				framenow = numframes - 1;  
 				framenext = numframes - 1;  
 			}; 
-				 
+		
 			averagevector = 0.0.dup(numfeatures);  
 				 
 			pos = numfeatures*framenow; 
