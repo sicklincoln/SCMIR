@@ -24,6 +24,10 @@ There is a small bug in the SC MFCC code in SuperCollider 3.4. Fixed in develope
 Change Log and Announcements: 
 
 
+0.93
+Fix for segmentation bug
+Added HMM class and external
+
 
 0.92
 Fix for recurrent NRT calculation problem for SC 3.5 and later
