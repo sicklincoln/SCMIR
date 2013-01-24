@@ -14,6 +14,7 @@ SCMIRAudioFile {
      var <segmenttimes, <numsegments, <featuresbysegments;  
      
      var <loadstart,<loadframes;  
+ 
        
 	//var normgroups;       
 	  
@@ -290,13 +291,38 @@ SCMIRAudioFile {
 		
 	}  
 	  
-	  
+	//assumes frame is sensible (0<=frame<numframes) for efficiency no checks  
+	getFeatureVector {|frame| 
 	
-
+			var index = frame * numfeatures; 
+	
+			^featuredata.copyRange(index,index+numfeatures-1); 
+		
+	}  
+	
+	//inclusive
+	//take mean or max
+	//for efficiency, no validity checks on frames. Could add for safety
+	combineFeatureVectors {|start, end, mean=true|
+		
+		//var result; 
+		//var startindex = start * numfeatures; 
+		//var endindex = = end * numfeatures; 
+		var indices = (start..end) * numfeatures; 
+		var numvectors = end-start+1; 
+		
+		^ if(mean) {
+			FloatArray.fill(numfeatures,{|i|  featuredata.at(indices+i).mean   }); 
+		} {
+			FloatArray.fill(numfeatures,{|i|  featuredata.at(indices+i).maxItem   }); 
+		};
+		
+	}
+	
 	
 	*resolveFeatures {|input, featurehop, featureinfo| 
 		var trig, chain, centroid, features;     
-		var mfccfft, chromafft, specfft, onsetfft;      
+		var mfccfft, chromafft, specfft, onsetfft, spec2fft;      
 		var fftsizetimbre = 1024;    
 		var fftsizepitch = 4096; //for chromagram, pitch detection  
 		var fftsizespec = 2048;   
@@ -350,9 +376,19 @@ SCMIRAudioFile {
 				\SensoryDissonance,{SensoryDissonance.kr(specfft, 2048)},
 				\SpecCentroid,{SpecCentroid.kr(specfft)},
 				\SpecPcile,{SpecPcile.kr(specfft,featuregroup[1] ? 0.5)},
-				\SpecFlatness,{SpecFlatness.kr(specfft)},
+				\SpecFlatness,{
+					
+					if(spec2fft.isNil) {spec2fft = FFT(LocalBuf(fftsizespec,1),input + WhiteNoise.ar(2**(-31)),0.25, wintype:1);  }; 
+					
+					SpecFlatness.kr(spec2fft)
+					
+					},
 				\FFTCrest,{FFTCrest.kr(specfft,featuregroup[1] ? 0, featuregroup[2] ? 50000)},
-				\FFTSpread,{FFTSpread.kr(specfft)},
+				\FFTSpread,{
+					
+					if(spec2fft.isNil) {spec2fft = FFT(LocalBuf(fftsizespec,1),input + WhiteNoise.ar(2**(-31)),0.25, wintype:1);  }; 
+					
+					FFTSpread.kr(spec2fft)},
 				\FFTSlope,{FFTSlope.kr(specfft)},
 				//always raw detection function in this feature extraction context
 				\Onsets,{Onsets.kr(onsetfft, odftype: (featuregroup[1] ?  \rcomplex), rawodf:1)},

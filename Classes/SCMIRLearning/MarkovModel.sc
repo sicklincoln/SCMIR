@@ -103,6 +103,28 @@ MarkovModel {
 		minimalprob = minimalprob*0.1; 	 
 			 
 	} 
+	
+	
+	distribution {|inputsequence| 
+		
+		var indexstart; 
+		var input; 
+		
+		input = if(inputsequence.size>order,{
+		
+			inputsequence.copyRange(inputsequence.size-order,inputsequence.size-1); 
+			
+		},inputsequence); 
+		
+		
+		
+		if(input.size<order) {^nil}; 
+		
+		 indexstart = ((input++[0])*lookupaids).sum;  
+		 
+		 ^transitionprobabilities.copyRange(indexstart,indexstart+numstates-1);
+	} 
+	
 		 
 		 
 		 

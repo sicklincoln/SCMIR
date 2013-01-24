@@ -28,6 +28,42 @@ SCMIRSimilarityMatrix {
 //	}  
 	
 	
+	*newFromMatrix {|data, r, c|
+			
+			//check perfect square
+			//if(data.size == (data.size.sqrt.asInteger**2)) {
+//				
+//			}
+		
+			^super.new.initSCMIRSimilarityMatrix2(data,r,c);
+		
+		}
+		
+		
+	
+	initSCMIRSimilarityMatrix2 {|data r c|
+		
+		if(data.class != FloatArray) {
+		
+			data = FloatArray.newFrom(data); 	
+			
+		};
+		
+		matrix = data; 
+		
+		dimensions = 1; 
+		
+		if(rows.isNil) {
+			r = data.size.sqrt.asInteger; 
+			c = r; 
+		}; 
+		
+		reducedcolumns = columns = c; 
+		reducedrows = rows = r; 
+			
+	}	
+	
+	
 	*new {|dimensions, sequence1, sequence2|       
 
 		if (sequence1.isNil) {
@@ -53,7 +89,7 @@ SCMIRSimilarityMatrix {
 		
 		self = 0; 
 		
-		//comprison or self similarity	
+		//comparison or self similarity	
 		sequence2 = seq2 ?? {self = 1;  sequence1}; 
 	
 			//must be RawArray for file write out

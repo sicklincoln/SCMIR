@@ -4,8 +4,13 @@
  
 + SCMIRAudioFile {   
 	 
+	novelty {|matrix, kernelsize=10| 
+		
+		^matrix.novelty(kernelsize); 
+	} 
+	 
 	  
-	novelty {|matrix, kernelsize=10|  
+	noveltyOld {|matrix, kernelsize=10|  
 		  
 		var file;  
 		var temp; 

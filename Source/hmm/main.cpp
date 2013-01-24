@@ -3,7 +3,7 @@
 //GHMM code from http://home.gna.org/dhmm/ and by Daniel Roggen, modified BSD, license at top of the dhmm.h and .cpp files
 
 
-
+#include <stdio.h>
 #include <iostream>
 #include "dhmm.h"
 
@@ -235,10 +235,7 @@ int main (int argc, char * const argv[]) {
     }
         
         else if (calltype ==3) {
-            
-            
-            printf("motherfucker/n"); 
-            
+ 
             hmm = new DHMM(1,1); 
             
             hmm->Load(argv[2]);	

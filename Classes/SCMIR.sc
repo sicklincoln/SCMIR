@@ -412,6 +412,8 @@ SCMIR {
 			
 			filenamelist.do {|filename,j|
 				
+			[j,filename].postln;
+				
 			e = SCMIRAudioFile(filename,featureinfo, normalizationtype,filestart,filedur);
 			
 			e.extractFeatures(false); 
