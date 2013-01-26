@@ -176,7 +176,7 @@ f.extractBeats(); //wait for me to finish
 a = f.beatdata; //beat locations
 
 b = f.tempi; //tempo curve
-b.plot2
+b.plot
 f.tempo; //estimate of global tempo as median
 
 //Experimental: via auxilliary program: BeatRoot from Simon Dixon http://www.eecs.qmul.ac.uk/~simond/beatroot/
