@@ -235,10 +235,8 @@ SCMIRAudioFile {
 			
 			if((val2[0]==\PolyPitch) && (val2.size==1),{val2 = [PolyPitch,4] }); 
 			 
-			 
-			 
 			 val2
-			  };   
+		};   
 		  				
 		//featureinfo.postln;  
 		  

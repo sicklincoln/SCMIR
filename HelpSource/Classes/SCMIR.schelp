@@ -7,9 +7,9 @@ description::
 
 by Nick Collins. 
 
-This extension library (with additional plugins and language invoked executables) for SuperCollider demonstrates carrying out some basic music information retrival tasks in audio content analysis. Right now, you can extract features for an audio file in NRT mode, plot features, get similarity matrices, plot them, extract novelty curves from the similarity matrices and thus find section boundaries. The library should work in batch processing too. 
+This extension library (with additional plugins and language invoked executables) for SuperCollider demonstrates carrying out music information retrival tasks in SuperCollider for audio content analysis. You can extract features for an audio file in NRT mode, plot features, get similarity matrices, plot them, extract novelty curves from the similarity matrices and thus find section boundaries, and more. The library is robust to batch processing over larger databases of hundreds of audio files in overnight runs. 
 
-The SCMIR base class allows you to set a base directory for temp files and storage of SCMIRAudioFile files with analysis data (.scmirZ format). Note that file permissions can be an issue on network systems; it is suggested that you work with a local copy of SuperCollider where you have write permissions. Also, do not try to analyze audio files from directories where you have no write access if you haven't set an alternative temp directory where temporary files can be written. 
+By default, \tmp is used for storing temporary files required in calculation, which should be robust to network permissions on Mac and Linux. The SCMIR base class allows you to set an alternative base directory for storing SCMIRAudioFile analysis data (.scmirZ format). Note that file permissions can be an issue on network systems; for full access it is suggested that you work with a local copy of SuperCollider where you have write permissions. Do not try to analyze audio files from directories where you have no write access if you want to write out analysis files alongside them. 
 
 
 examples::
@@ -20,7 +20,7 @@ SCMIR.setTempDir("/Users/nickcollins/Desktop/SCMIRTest");
 
 SCMIR.tempdir
 
-//don't use a tempdir, analysis files and saved .scmirZ archives appear in the same directory as any target sound file
+//don't use a tempdir, saved .scmirZ archives appear in the same directory as any target sound file
 SCMIR.setTempDir(nil);
 
 SCMIR.tempdir

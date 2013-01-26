@@ -183,6 +183,19 @@ a = m.dtw
 
 m.plot(2,path:a)	//plot with best dtw path 
 
+
+//directly create a SCMIRSimilarityMatrix object with existing matrix data
+
+//16 element array, 4 by 4 matrix
+a = SCMIRSimilarityMatrix.newFromMatrix([0.1,0.3,0.5,0.2,0.3,0.1,0.0,0.7,0.3,0.5,0.0,1.0,0.1,0.4,0.7,0.3],4,4)
+//data is in form col1, col2, col3, ... where each column starts from the bottom row and goes to the top
+
+a.plot(100)
+
+a.novelty(2).plot
+
+
+
 ::
 
 
