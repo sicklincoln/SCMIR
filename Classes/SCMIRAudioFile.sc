@@ -366,12 +366,12 @@ SCMIRAudioFile {
 				},
 				\SpectralEntropy,{
 
-					SpectralEntropy.kr(specfft,2048,featuregroup[1]);
+					SpectralEntropy.kr(specfft,2048); //,featuregroup[1] can't allow multiband unless correct numfeatures extracted
 				},
 				\Tartini, {Tartini.kr(input, 0.93, 2048, 0, 2048-featurehop) },
 				\PolyPitch,{PolyPitch.kr(input,featuregroup[1])},
-				\Loudness, {Loudness.kr(mfccfft) },
-				\SensoryDissonance,{SensoryDissonance.kr(specfft, 2048)},
+				\Loudness, {Loudness.kr(mfccfft,featuregroup[1] ? 0.25, featuregroup[2] ? 1) },
+				\SensoryDissonance,{SensoryDissonance.kr(specfft, featuregroup[1] ? 100, featuregroup[2] ? 0.1, featuregroup[3], featuregroup[4] ? 1.0)},
 				\SpecCentroid,{SpecCentroid.kr(specfft)},
 				\SpecPcile,{SpecPcile.kr(specfft,featuregroup[1] ? 0.5)},
 				\SpecFlatness,{
