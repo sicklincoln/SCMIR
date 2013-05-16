@@ -23,4 +23,4 @@ target_link_libraries(gmm ${LIBGSL}/libgsl.a ${LIBGSL}/libgslcblas.a)
 file(GLOB nnSources NeuralNet/*cpp)
 add_executable(NeuralNet ${nnSources})
 
-INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/noveltycurve ${CMAKE_CURRENT_BINARY_DIR}/similaritymatrix ${CMAKE_CURRENT_BINARY_DIR}/NeuralNet ${CMAKE_CURRENT_BINARY_DIR}/hmm ${CMAKE_CURRENT_BINARY_DIR}/gmm DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/../scmirexec/")
+INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/noveltycurve ${CMAKE_CURRENT_BINARY_DIR}/similaritymatrix ${CMAKE_CURRENT_BINARY_DIR}/NeuralNet ${CMAKE_CURRENT_BINARY_DIR}/hmm ${CMAKE_CURRENT_BINARY_DIR}/gmm DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/../SCMIRExtensions/scmirexec/")
