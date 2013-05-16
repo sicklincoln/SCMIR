@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.36">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #cd1713}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #737373}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #000000}
+span.s3 {color: #102ac3}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>PPMC<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>Prediction by Partial Match - 'C' variant, Variable order Markov Model</b></p>
+<p class="p2"><br></p>
+<p class="p1"><b>Inherits from: Object</b></p>
+<p class="p3"><br></p>
+<p class="p1">Machine learning class for discrete state sequences. See:<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1">Ron Begleiter, Ran El-Yaniv and Golan Yona (2004) 'On Prediction Using Variable Order Markov Models.' Journal of Artificial Intelligence Research 22: 385-421</p>
+<p class="p2"><br></p>
+<p class="p1">and</p>
+<p class="p2"><br></p>
+<p class="p1">Marcus Pearce and Geraint Wiggins (2004) 'Improved Methods for Statistical Modelling of Monophonic Music.' Journal of New Music Research 33(4)</p>
+<p class="p2"><br></p>
+<p class="p1">This implementation uses +1 in the numerator and demoninator in the probability calculations, (what Pearce and Wiggins denote the PPM-AX variant of C) and no exclusion mechanism, just escape.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1"><b>See also:</b> SCMIR, MarkovModel</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4"><span class="s2">m = </span><span class="s3">PPMC</span><span class="s2">(2); <span class="Apple-tab-span">	</span></span>//order =2 (last 2 states predict next)</p>
+<p class="p3"><br></p>
+<p class="p4">//sequence for training; can be array of integers, or a String (as Array of characters)</p>
+<p class="p5">a =<span class="s3">Array</span>.fill(100,{ 6.rand })</p>
+<p class="p3"><br></p>
+<p class="p5">m.train(a)</p>
+<p class="p3"><br></p>
+<p class="p5">m.trie.postcs</p>
+<p class="p3"><br></p>
+<p class="p5">a</p>
+<p class="p3"><br></p>
+<p class="p5">m.probability([19])</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p5">m.averagelogloss(a)</p>
+<p class="p3"><br></p>
+<p class="p5">m.averagelogloss(a.reverse)</p>
+<p class="p3"><br></p>
+<p class="p5">m.averagelogloss(a.rotate(16))</p>
+<p class="p3"><br></p>
+<p class="p5">m.averagelogloss(<span class="s3">Array</span>.fill(100,{ 6.rand }))</p>
+<p class="p3"><br></p>
+<p class="p5">m.averagelogloss(<span class="s3">Array</span>.fill(100,{ 4.rand }))</p>
+<p class="p3"><br></p>
+<p class="p4">//empty context</p>
+<p class="p5">m.generate</p>
+<p class="p3"><br></p>
+<p class="p5">m.generate(a[0..1]);</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p5">(</p>
+<p class="p5"><span class="s3">var</span> lastvals = <span class="s3">List</span>[];<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p5">b = <span class="s3">Array</span>.fill(100,{</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="s3">var</span> nextval = m.generate(lastvals.reverse);<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>if(lastvals.size&lt;3) {lastvals.addFirst(nextval);} {</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>lastvals.addFirst(nextval);<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>lastvals.pop;<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>};</p>
+<p class="p3"><span class="Apple-tab-span">	</span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>nextval;</p>
+<p class="p5">});</p>
+<p class="p3"><br></p>
+<p class="p5">)</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p5">b.plot</p>
+<p class="p5">a.plot</p>
+<p class="p3"><br></p>
+<p class="p5">m.averagelogloss(b)</p>
+<p class="p3"><br></p>
+<p class="p5">m.averagelogloss(a)</p>
+<p class="p3"><br></p>
+<p class="p4">//b can be more likely than a according to the model; b was generated from model's stats, which approximate a but are not the same as a<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4">/////////////////////////////////////////////////////////TESTS</p>
+<p class="p3"><br></p>
+<p class="p4">//test of save load on large object</p>
+<p class="p3"><br></p>
+<p class="p5">p = <span class="s3">PPMC</span>(5)</p>
+<p class="p3"><br></p>
+<p class="p5">a =<span class="s3">Array</span>.fill(100000,{ 6.rand })</p>
+<p class="p3"><br></p>
+<p class="p5">p.train(a)</p>
+<p class="p3"><br></p>
+<p class="p5">p.trie.postcs</p>
+<p class="p3"><br></p>
+<p class="p6"><span class="s2">p.save(</span>"/Users/nickcollins/Desktop/testme.scmirz"<span class="s2">)</span></p>
+<p class="p3"><br></p>
+<p class="p5">p = <span class="s3">PPMC</span>(5);<span class="Apple-converted-space"> </span></p>
+<p class="p6"><span class="s2">p.load(</span>"/Users/nickcollins/Desktop/testme.scmirz"<span class="s2">)</span></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4">//test of recursive save load on trie</p>
+<p class="p3"><br></p>
+<p class="p4"><span class="s2">m = </span><span class="s3">PPMC</span><span class="s2">(5); <span class="Apple-tab-span">	</span></span>//order =2 (last 2 states predict next)</p>
+<p class="p3"><br></p>
+<p class="p4">//sequence for training; can be array of integers, or a String (as Array of characters)</p>
+<p class="p5">a = <span class="s3">Array</span>.fill(10000,{ 6.rand })</p>
+<p class="p3"><br></p>
+<p class="p5">m.train(a)</p>
+<p class="p3"><br></p>
+<p class="p5">m.trie.postcs</p>
+<p class="p3"><br></p>
+<p class="p5">(</p>
+<p class="p6"><span class="s2">w = </span><span class="s3">SCMIRZArchive</span><span class="s2">.write(</span>"/Users/nickcollins/Desktop/testppmc.scmirZ"<span class="s2">); <span class="Apple-converted-space">     </span></span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
+<p class="p5">m.saveDictionary(w,m.trie,0);</p>
+<p class="p3"><br></p>
+<p class="p5">w.writeClose;<span class="Apple-converted-space"> </span></p>
+<p class="p5">)</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p5">(</p>
+<p class="p6"><span class="s2">r = </span><span class="s3">SCMIRZArchive</span><span class="s2">.read(</span>"/Users/nickcollins/Desktop/testppmc.scmirZ"<span class="s2">); <span class="Apple-converted-space">     </span></span></p>
+<p class="p3"><span class="Apple-converted-space">      <span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span> </span></p>
+<p class="p5">d= m.loadDictionary(r,0);</p>
+<p class="p3"><br></p>
+<p class="p5">r.close;<span class="Apple-converted-space"> </span></p>
+<p class="p5">)</p>
+<p class="p3"><br></p>
+<p class="p5">d == m.trie</p>
+<p class="p3"><br></p>
+<p class="p5">d.postcs</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+</body>
+</html>

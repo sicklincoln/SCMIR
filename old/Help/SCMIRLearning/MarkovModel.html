@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.36">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #cd1713}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+span.s1 {font: 12.0px Helvetica}
+span.s2 {color: #000000}
+span.s3 {color: #102ac3}
+span.s4 {color: #cd1713}
+span.s5 {color: #102ac2}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><b>MarkovModel<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b><span class="s1"><b>Markov Model<span class="Apple-converted-space"> </span></b></span><b><span class="Apple-tab-span">	</span></b></p>
+<p class="p2"><br></p>
+<p class="p3"><b>Inherits from: Object</b></p>
+<p class="p4"><br></p>
+<p class="p3">Machine learning class for discrete state sequences. <span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p3"><b>See also:</b> SCMIR</p>
+<p class="p4"><br></p>
+<p class="p4"><br></p>
+<p class="p5"><span class="s2">m = </span><span class="s3">MarkovModel</span><span class="s2">(6,2); <span class="Apple-tab-span">	</span></span>//num states = 6, order =2 (last 2 states predict next)</p>
+<p class="p4"><br></p>
+<p class="p6">m.transitioncounts.size <span class="s4">//216 = 6**3</span></p>
+<p class="p4"><br></p>
+<p class="p5">//sequence for training</p>
+<p class="p6">a =<span class="s3">Array</span>.fill(1000,{ 6.rand })</p>
+<p class="p4"><br></p>
+<p class="p6">m.train(a)</p>
+<p class="p4"><br></p>
+<p class="p5">//counts over all possible transition situations</p>
+<p class="p6">m.transitioncounts.class.postcs</p>
+<p class="p4"><br></p>
+<p class="p6">m.transitionprobabilities</p>
+<p class="p4"><br></p>
+<p class="p6">log(m.minimalprob)</p>
+<p class="p4"><br></p>
+<p class="p6">m.averagelogloss(<span class="s5">Array</span>.fill(100,{ 6.rand }))</p>
+<p class="p4"><br></p>
+<p class="p6">m.averagelogloss(<span class="s5">Array</span>.fill(100,{ 4.rand }))</p>
+</body>
+</html>

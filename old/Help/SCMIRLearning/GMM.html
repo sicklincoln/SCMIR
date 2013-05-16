@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.36">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #cd1713}
+span.s1 {font: 18.0px Helvetica}
+span.s2 {color: #102ac3}
+span.s3 {color: #000000}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1"><b>GMM<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></b></span><b>Gaussian Mixture Model</b><span class="s1"><b><span class="Apple-tab-span">	</span></b></span></p>
+<p class="p2"><br></p>
+<p class="p1"><b>Inherits from: Object</b></p>
+<p class="p3"><br></p>
+<p class="p1">Experimental machine learning class, useful for density estimation or clustering. Certain functions require the use of MathLib from the Quarks. Also relies on an auxilliary external for the hard work.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1"><b>See also:</b> SCMIR, NaiveBayes</p>
+<p class="p3"><br></p>
+<p class="p4">FUTURE: Can remove dependency on MathLib if roll own matrix multiplications<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p4">g = <span class="s2">GMM</span>(4);<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p4">g.numstates;<span class="Apple-converted-space"> </span></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p5">//if don't have distinguished states, can get situation where fails to train!<span class="Apple-converted-space"> </span></p>
+<p class="p5">//d = Array.fill(100,{|i| [i]++({0.2.rand2}!10)});</p>
+<p class="p4">d = <span class="s2">Array</span>.fill(1000,{<span class="s2">|i|</span> ({rrand(i%4,2*(i%4)+1.0)}!10)});</p>
+<p class="p3"><br></p>
+<p class="p5"><span class="s3">g.train(d)<span class="Apple-tab-span">	</span></span>//can take a while if thousands of data points</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p5"><span class="s3">g.loadModel;<span class="Apple-converted-space">  </span></span>//get GMM model parameters into SC</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p5"><span class="s3">g.generate; </span>//create random new points from the mixture model</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p5">//test specific data points for predicted class</p>
+<p class="p4">(</p>
+<p class="p4">a = {rrand(0.0,1.0)}!10;</p>
+<p class="p4">g.test(a);<span class="Apple-converted-space"> </span></p>
+<p class="p4">)</p>
+<p class="p3"><br></p>
+<p class="p5">//some sprinkling of classes 2 and 3</p>
+<p class="p4">100.do{ g.test({rrand(2.0,7.0)}!10).postln }</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p5">////////////////////////////////////////////////////////////////////////</p>
+<p class="p5">//TESTING<span class="Apple-converted-space"> </span></p>
+<p class="p5">//http://en.wikipedia.org/wiki/Eigendecomposition_(matrix)</p>
+<p class="p3"><br></p>
+<p class="p5">//check that covarA is the 'square root' of covarmatrices</p>
+<p class="p4">a = g.covarA[0]</p>
+<p class="p4">a*(a.flop)</p>
+<p class="p4">b = g.covarmatrices[0]</p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+<p class="p3"><br></p>
+</body>
+</html>
