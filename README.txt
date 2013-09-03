@@ -1,6 +1,6 @@
 README
 
-SuperCollider Music Information Retrieval (SCMIR) library version 1.0
+SuperCollider Music Information Retrieval (SCMIR) library version 1.1
 by Nick Collins
 http://www.sussex.ac.uk/Users/nc81/index.html
 
@@ -21,6 +21,30 @@ There is a small bug in the SC MFCC code in SuperCollider 3.4. Fixed in develope
 
 
 Change Log and Announcements: 
+
+1.1
+
+Latest release of SCMIR
+
+SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis; version 1.1
+
+new additions and changes: 
+Machine learning classes: 
+MarkovPool: context based committe of Markov models
+SOM: 1-dimensional self organising map
+SARDNET: self organising map reacting to temporal sequences
+VOGUE: variable order Markov model based on a durational HMM for frequently occuring length 2 subsequences
+
+Tweak to exposed arguments in SCMIRAudioFile feature handling
+
+Reworked internal code directory structure to better match public release format
+Slight fix for linux support
+
+First Durham release:
+http://www.dur.ac.uk/nick.collins/code.html
+http://www.dur.ac.uk/nick.collins/code/SCMIR.zip
+
+
 
 1.0
 
