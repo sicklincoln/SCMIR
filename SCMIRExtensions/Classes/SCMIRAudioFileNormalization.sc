@@ -216,6 +216,10 @@
 			\PolyPitch,{
 				
 				numfeaturesnow = (2*featurenow[1])+1; 
+			},
+			\PianoPitch,{
+				
+				numfeaturesnow = 88; 
 			}
 			); 
 			  

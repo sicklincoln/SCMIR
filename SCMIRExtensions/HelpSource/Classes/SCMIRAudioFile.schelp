@@ -14,7 +14,7 @@ So
 means extract 13 MFCC coefficients and 12 chroma (12TET), 
 Normalization is automatically applied, by default on a per individual feature basis (except for chroma, which are normalized as a group of features), and normalized with respect to the current file. There are mechanisms to have global normalisation over a corpus, see batch examples below. 
 
-Features supported (depending in some cases on whether you have certain third party plugins installed): MFCC, Chromagram, Loudness, Tartini, SensoryDissonance, SpecCentroid, SpecPcile, SpecFlatness, FFTCrest, FFTSpread, FFTSlope, Onsets in raw detection function mode, Transient, SpectralEntropy, PolyPitch
+Features supported (depending in some cases on whether you have certain third party plugins installed): MFCC, Chromagram, Loudness, Tartini, SensoryDissonance, SpecCentroid, SpecPcile, SpecFlatness, FFTCrest, FFTSpread, FFTSlope, Onsets in raw detection function mode, Transient, SpectralEntropy, PolyPitch, PianoPitch, Tempo
 
 Assumptions/notes:
 -Though the original sound file could be any rate, the MIR system sampling rate of 44100 is assumed. 

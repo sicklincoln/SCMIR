@@ -352,6 +352,63 @@ NeuralNet {
 	
 	//efficiency for later?- fix n inputs as last time, only change m
 	
+	
+	
+	save { |filename| 
+		var a;   
+
+		filename = filename?? {SCMIR.tempdir++"neuralnet"++".scmirZ"}; 
+	
+		a = SCMIRZArchive.write(filename);  
+
+		a.writeItem(nin);
+		a.writeItem(nhidden);  
+		a.writeItem(nout);
+		a.writeItem(learningrate);  
+		a.writeItem(weightsh);  
+		a.writeItem(weightso);  
+		a.writeItem(biash);  
+		a.writeItem(biaso);  
+		a.writeItem(dk);  
+		a.writeItem(dh);  
+		a.writeItem(input);  
+		a.writeItem(hiddenoutput);
+		a.writeItem(output);
+		a.writeItem(trainingepoch);
+		a.writeItem(isTraining);
+		
+		a.writeClose;  		  
+	}  
+	  
+	  
+	load { |filename| 
+		var a;   
+		  
+		filename = filename?? {SCMIR.tempdir++"neuralnet"++".scmirZ"};    
+		  
+		a = SCMIRZArchive.read(filename);  
+
+		nin = a.readItem;   
+		nhidden = a.readItem;   
+		nout = a.readItem;    
+		learningrate= a.readItem;  
+		weightsh= a.readItem;  
+		weightso= a.readItem;  
+		biash= a.readItem;  
+		biaso= a.readItem;  
+		dk= a.readItem;  
+		dh= a.readItem;  
+		input= a.readItem;  
+		hiddenoutput= a.readItem;
+		output= a.readItem;
+		trainingepoch= a.readItem;
+		isTraining= a.readItem;	
+			  
+		a.close;  
+		  
+	}  
+	
+	
 }
 
 

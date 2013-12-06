@@ -226,6 +226,11 @@ SCMIRAudioFile {
 			if(\PolyPitch.asClass.notNil) {
 				if((val2[0]==PolyPitch) && (val2.size==1),{val2 = [PolyPitch,4] });
 			};
+			
+			if(\PianoPitch.asClass.notNil) {
+				if((val2[0]==PianoPitch) && (val2.size==1),{val2 = [PianoPitch,88] });
+			};
+
 
 			if((val2[0]==\MFCC) && (val2.size==1),{val2 = [MFCC,10] });
 
@@ -234,6 +239,8 @@ SCMIRAudioFile {
 			if((val2[0]==\SpectralEntropy) && (val2.size==1),{val2 = [SpectralEntropy,1] });
 
 			if((val2[0]==\PolyPitch) && (val2.size==1),{val2 = [PolyPitch,4] });
+
+			if((val2[0]==\PianoPitch) && (val2.size==1),{val2 = [PianoPitch,88] });
 
 			 val2
 		};
@@ -277,6 +284,11 @@ SCMIRAudioFile {
 				numfeatures = numfeatures +  ((2*featuregroup[1])+1);
 
 			},
+			\PianoPitch, {
+
+				numfeatures = numfeatures +  featuregroup[1];
+
+			},
 			{
 				numfeatures = numfeatures +  1;
 			}
@@ -297,6 +309,20 @@ SCMIRAudioFile {
 			^featuredata.copyRange(index,index+numfeatures-1);
 
 	}
+
+	getFeatureVectors {
+
+		var top = numfeatures-1; 
+		
+			^Array.fill(numframes,{|i|  
+				
+				var index = i * numfeatures; 
+				
+				featuredata.copyRange(index,index+top);
+			})
+
+	}
+
 
 	//inclusive
 	//take mean or max
@@ -364,12 +390,21 @@ SCMIRAudioFile {
 
 					Chromagram.kr(chromafft,4096,featuregroup[1]);
 				},
+				\KeyClarity,{
+
+					KeyClarity.kr(chromafft,featuregroup[1] ? 2.0, featuregroup[2] ? 0.5);
+				},
+				\KeyTrack,{
+					KeyTrack.kr(chromafft,featuregroup[1] ? 2.0, featuregroup[2] ? 0.5);
+				},
 				\SpectralEntropy,{
 
 					SpectralEntropy.kr(specfft,2048); //,featuregroup[1] can't allow multiband unless correct numfeatures extracted
 				},
 				\Tartini, {Tartini.kr(input, 0.93, 2048, 0, 2048-featurehop) },
 				\PolyPitch,{PolyPitch.kr(input,featuregroup[1])},
+				\PianoPitch,{PianoPitch.kr(input,normalizeframe:1)},
+				\Tempo,{BeatTrack.kr(mfccfft)[3]},
 				\Loudness, {Loudness.kr(mfccfft,featuregroup[1] ? 0.25, featuregroup[2] ? 1) },
 				\SensoryDissonance,{SensoryDissonance.kr(specfft, featuregroup[1] ? 100, featuregroup[2] ? 0.1, featuregroup[3], featuregroup[4] ? 1.0)},
 				\SpecCentroid,{SpecCentroid.kr(specfft)},
@@ -393,6 +428,7 @@ SCMIRAudioFile {
 				//more to add: FFTRumble (in combination with pitch detection, energy under f0)
 				\RMS,{Latch.kr(RunningSum.rms(input,1024),mfccfft)},
 				\ZCR,{Latch.kr(ZeroCrossing.ar(input),mfccfft)},
+				\AttackSlope,{Latch.kr(AttackSlope.kr(input)[3],mfccfft)},
 				\Transient,{
 					chain = DWT(LocalBuf(1024,1), input, 1, wavelettype:2);
 					chain = WT_Transient(chain, featuregroup[1] ? 0.5, featuregroup[2] ? 0.1);

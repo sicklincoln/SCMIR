@@ -199,7 +199,7 @@ SCMIRLive {
 		 
 	createResponder {|function| 
 			 
-		responder.free;  
+		responder.remove;  
 		responder = OSCresponderNode(nil,oscname,{|t, r, msg| 
 			
 			//to support multiple SCMIRLive responders at once	 
