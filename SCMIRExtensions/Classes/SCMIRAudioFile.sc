@@ -226,7 +226,7 @@ SCMIRAudioFile {
 			if(\PolyPitch.asClass.notNil) {
 				if((val2[0]==PolyPitch) && (val2.size==1),{val2 = [PolyPitch,4] });
 			};
-			
+
 			if(\PianoPitch.asClass.notNil) {
 				if((val2[0]==PianoPitch) && (val2.size==1),{val2 = [PianoPitch,88] });
 			};
@@ -312,12 +312,12 @@ SCMIRAudioFile {
 
 	getFeatureVectors {
 
-		var top = numfeatures-1; 
-		
-			^Array.fill(numframes,{|i|  
-				
-				var index = i * numfeatures; 
-				
+		var top = numfeatures-1;
+
+			^Array.fill(numframes,{|i|
+
+				var index = i * numfeatures;
+
 				featuredata.copyRange(index,index+top);
 			})
 
@@ -388,7 +388,7 @@ SCMIRAudioFile {
 				},
 				\Chromagram,{
 
-					Chromagram.kr(chromafft,4096,featuregroup[1]);
+					Chromagram.kr(chromafft,4096,featuregroup[1],tuningbase:featuregroup[2]?32.703195662575, octaves:featuregroup[3]?8, integrationflag:featuregroup[4]?0, coeff:featuregroup[5]?0.9, octaveratio:featuregroup[6]?2,perframenormalize:featuregroup[7]?0);
 				},
 				\KeyClarity,{
 
