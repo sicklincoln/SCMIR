@@ -22,6 +22,15 @@ There is a small bug in the SC MFCC code in SuperCollider 3.4. Fixed in develope
 
 Change Log and Announcements: 
 
+1.2 
+
+SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis; version 1.2
+
+save and load for MarkovPool
+extra options for Chromagram to match new arguments made available in SCMIRPlugins
+NeuralNet save/load, extra segmentation option via start and end times per segment, additional features
+
+
 1.1
 
 Latest release of SCMIR
