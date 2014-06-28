@@ -1,11 +1,12 @@
 README
 
-SuperCollider Music Information Retrieval (SCMIR) library version 1.1
+SuperCollider Music Information Retrieval (SCMIR) library version 1.3
 by Nick Collins
-http://www.sussex.ac.uk/Users/nc81/index.html
+composerprogrammer.com
 
 For SuperCollider 3, all code under GNU GPL 3 license, see COPYING file. 
 
+Version 1.2+ tested on SC 3.6
 Version 0.9+ tested on SC 3.5 (and basic tests on 3.6)
 Version up to 0.8 tested extensively under SC3.4.4 on OS X 
 
@@ -21,6 +22,20 @@ There is a small bug in the SC MFCC code in SuperCollider 3.4. Fixed in develope
 
 
 Change Log and Announcements: 
+
+1.3
+
+SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis; version 1.3
+
+Added extractFeaturesWithWindowing() function to directly call window size and hop size aggregation for features
+Coverage for some extra third party features
+SCMIRLive feature clip option and load bug fix; always allocates unique IDs for OSC response now
+General fixes
+
+Now at composerprogrammer.com:
+http://composerprogrammer.com/code.html
+http://composerprogrammer.com/code/SCMIR.zip
+
 
 1.2 
 

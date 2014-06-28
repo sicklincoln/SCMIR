@@ -231,6 +231,9 @@ SCMIRAudioFile {
 				if((val2[0]==PianoPitch) && (val2.size==1),{val2 = [PianoPitch,88] });
 			};
 
+			if(\OnsetStatistics.asClass.notNil) {
+				if((val2[0]==OnsetStatistics) && (val2.size==1),{val2 = [OnsetStatistics,2.0,0.125] });
+			};
 
 			if((val2[0]==\MFCC) && (val2.size==1),{val2 = [MFCC,10] });
 
@@ -241,6 +244,8 @@ SCMIRAudioFile {
 			if((val2[0]==\PolyPitch) && (val2.size==1),{val2 = [PolyPitch,4] });
 
 			if((val2[0]==\PianoPitch) && (val2.size==1),{val2 = [PianoPitch,88] });
+
+			if((val2[0]==\OnsetStatistics) && (val2.size==1),{val2 = [OnsetStatistics,2.0,0.125] });
 
 			 val2
 		};
@@ -277,7 +282,7 @@ SCMIRAudioFile {
 			},
 			\Tartini,{
 
-				numfeatures = numfeatures +  2;
+					numfeatures = numfeatures +  if(featuregroup.size==1,1,2);
 			},
 			\PolyPitch, {
 
@@ -288,6 +293,9 @@ SCMIRAudioFile {
 
 				numfeatures = numfeatures +  featuregroup[1];
 
+			},
+			\OnsetStatistics, {
+				numfeatures = numfeatures + 3;
 			},
 			{
 				numfeatures = numfeatures +  1;
@@ -397,11 +405,24 @@ SCMIRAudioFile {
 				\KeyTrack,{
 					KeyTrack.kr(chromafft,featuregroup[1] ? 2.0, featuregroup[2] ? 0.5);
 				},
+				\KeyMode,{
+					KeyMode.kr(chromafft,featuregroup[1] ? 2.0, featuregroup[2] ? 0.5);
+				},
 				\SpectralEntropy,{
 
 					SpectralEntropy.kr(specfft,2048); //,featuregroup[1] can't allow multiband unless correct numfeatures extracted
 				},
-				\Tartini, {Tartini.kr(input, 0.93, 2048, 0, 2048-featurehop) },
+				\Tartini, {
+					var pitchdetection = Tartini.kr(input, 0.93, 2048, 0, 2048-featurehop);
+
+					if(featuregroup.size==1)
+					{
+						pitchdetection[0].cpsmidi
+					}{
+					//from frequency back to MIDI note space for better normalisation properties
+					[pitchdetection[0].cpsmidi,pitchdetection[1]]
+					};
+				},
 				\PolyPitch,{PolyPitch.kr(input,featuregroup[1])},
 				\PianoPitch,{PianoPitch.kr(input,normalizeframe:1)},
 				\Tempo,{BeatTrack.kr(mfccfft)[3]},
@@ -433,7 +454,11 @@ SCMIRAudioFile {
 					chain = DWT(LocalBuf(1024,1), input, 1, wavelettype:2);
 					chain = WT_Transient(chain, featuregroup[1] ? 0.5, featuregroup[2] ? 0.1);
 					WT_ModulusSum.kr(chain);
-					}
+					},
+				\OnsetStatistics,{
+					//window size, threshold
+					OnsetStatistics.kr(Onsets.kr(FFT(LocalBuf(512),input),featuregroup[2] ? 0.125),featuregroup[1] ? 2.0);
+				}
 				));
 
 
@@ -446,13 +471,13 @@ SCMIRAudioFile {
 
 
 
-	//times at start of each windows
+	//times at start of each window
 	frameStartTimes {
 		var featurehop = SCMIR.framehop;
 		var hoptime = featurehop/SCMIR.samplingrate;
 
 		^if(featuresbysegments) {
-			//centres rather than beginnings
+			//beginnings
 			segmenttimes
 		}
 		{
@@ -479,6 +504,19 @@ SCMIRAudioFile {
 
 		//^Array.fill(numframes,{|i|  start + (hoptime*i) });
 	}
+
+
+	extractFeaturesWithWindowing {|normalize=true, useglobalnormalization=false, windowsize=1.0, stepsize=0.1, replace=true, meanormax=0|
+
+		var segmentsarray;
+
+		this.extractFeatures(normalize,useglobalnormalization);
+
+		segmentsarray = Array.fill(((duration-windowsize - 0.001)/stepsize).floor,{|i| var pos = stepsize*i; [pos,pos+windowsize]  });
+
+		^this.gatherFeaturesBySegments(segmentsarray,replace,meanormax); //mean 0 max 1
+	}
+
 
 	//must be called within a fork? How to enforce, test that?
 	extractFeatures {|normalize=true, useglobalnormalization=false| //|writefeaturefile= false|
@@ -700,7 +738,10 @@ SCMIRAudioFile {
 				numberlinked = featurenow[1];
 			},
 			\Tartini,{
-				numberlinked = 2;
+					numberlinked = if(featurenow.size==1,1,2);
+			},
+			\OnsetStatistics,{
+					numberlinked = 3;
 			}
 			);
 
