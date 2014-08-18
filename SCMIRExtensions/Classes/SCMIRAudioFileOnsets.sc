@@ -128,13 +128,13 @@
 
 
 	//in general may need offset times as well as onsets, left ambiguous for now
-	gatherFeaturesByOnsets {|replace=true, meanormax=0|
+	gatherFeaturesByOnsets {|replace=true, summarytype=0|
 
 		if (featuredata.notNil) {
 
 			if (onsetdata.notNil) {
 
-				^this.gatherFeaturesBySegments(onsetdata, replace, meanormax);
+				^this.gatherFeaturesBySegments(onsetdata, replace, summarytype);
 				} {
 
 				"SCMIRAudioFile:gatherFeaturesByOnsets - no onsets extracted to act as segmentation guide".postln;
@@ -146,7 +146,7 @@
 	}
 
 	//convert featuredata to match up to segments, segments array passed in gives segment positions; if only one number in a slot, taken as start position (end assumed next segment)
-	gatherFeaturesBySegments {|segments, replace=true, meanormax=0, beatsegments=false|
+	gatherFeaturesBySegments {|segments, replace=true, summarytype=0, beatsegments=false|
 
 		var pos = 0.0;
 		var timeperframe= SCMIR.hoptime; //0.023219954648526; //converting from 1024 point windows at 44100 SR
@@ -206,7 +206,9 @@
 
 			pos = numfeatures*framenow;
 
-			if (meanormax==0) {
+			switch(summarytype,
+				0,
+				{
 				//mean
 
 				for(framenow, framenext, {|j|
@@ -222,12 +224,15 @@
 
 				averagevector = averagevector/(framenext-framenow+1);
 
-			}
-
-			{
-				//max
+			},
+				1,
+			{//max
 
 				for(framenow, framenext, {|j|
+
+
+					//doesn't work due to type issues
+					//averagevector = max(averagevector,featuredata.copyRange(pos,pos+numfeatures-1));
 
 					numfeatures.do{|k|
 
@@ -239,7 +244,68 @@
 				});
 
 
-			};
+			},
+			2,
+			{
+
+				//min([9,3,4],[3,10,19])
+				//make maximal rather than starting with zeroes!
+				averagevector = 999999999.9.dup(numfeatures);
+
+				//min
+					for(framenow, framenext, {|j|
+
+						 numfeatures.do{|k|
+
+						 	averagevector[k] = min(averagevector[k],featuredata[pos+k]);
+						 };
+
+					pos = pos + numfeatures;
+
+				});
+
+
+				},
+			3,
+				{
+				//standard deviation
+					var stddevs, pos2;
+
+				pos2 = pos;
+
+				//first find mean
+				for(framenow, framenext, {|j|
+
+					numfeatures.do{|k|
+						averagevector[k] = averagevector[k] + featuredata[pos2+k];
+					};
+
+					pos2 = pos2 + numfeatures;
+
+				});
+
+				averagevector = averagevector/(framenext-framenow+1);
+
+				//averagevector now contains means for each feature
+
+				stddevs = 0.0.dup(numfeatures);
+
+				for(framenow, framenext, {|j|
+
+					numfeatures.do{|k|
+
+							stddevs[k] = stddevs[k] + (((featuredata[pos+k])-(averagevector[k])).squared);
+					};
+
+					pos = pos + numfeatures;
+
+				});
+
+				stddevs = (stddevs/(framenext-framenow+1)).sqrt;
+
+				averagevector = stddevs;
+			},
+			);
 
 			pos = numfeatures*i;
 
