@@ -15,9 +15,9 @@ code::
 //extract features for a given file
 e = SCMIRAudioFile(Platform.resourceDir +/+ "sounds/a11wlk01.wav", [[MFCC, 13], [Chromagram, 12]]);
 
-e.extractFeatures();
+e.extractFeatures(normalize:false); //must not already normalize unless you will manually pass over the normalization data; SCMIRLive will deal with that in next step
 
-//now convert to live feature extractor (in this case must have carried out feature extraction above to get normalisation data, see below for alternatives)
+//now convert to live feature extractor
 l = SCMIRLive(e)
 
 l.dump
@@ -44,6 +44,8 @@ l.save("/tmp/scmirlive1.scmirZ");
 
 l.load("/tmp/scmirlive1.scmirZ"); 
 
+l.createSynthDef.add //make a new SynthDef: required for safety after load to 
+avoid repeated names over multiple sessions
 
 a = l.run(8)
 
@@ -91,7 +93,7 @@ a = l.run(8)
 //extract features for a given file
 e = SCMIRAudioFile(Platform.resourceDir +/+ "sounds/a11wlk01.wav", [[MFCC, 13], [Chromagram, 12]]);
 
-e.extractFeatures();
+e.extractFeatures(normalize:false);
 
 //now convert to live feature extractor
 l = SCMIRLive(e)
