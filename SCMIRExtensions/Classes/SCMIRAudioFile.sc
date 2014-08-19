@@ -247,6 +247,9 @@ SCMIRAudioFile {
 
 			if((val2[0]==\OnsetStatistics) && (val2.size==1),{val2 = [OnsetStatistics,2.0,0.125] });
 
+			//Silent zeroes output if no function supplied at all!
+			if((val2[0]==\CustomFeature) && (val2.size==1),{val2 = [CustomFeature,{DC.kr(0)}] });
+
 			 val2
 		};
 
@@ -296,6 +299,11 @@ SCMIRAudioFile {
 			},
 			\OnsetStatistics, {
 				numfeatures = numfeatures + 3;
+			},
+			\CustomFeature,{
+					//1 output only if nil, else supplied
+					numfeatures = numfeatures + (featuregroup[2]?1);
+
 			},
 			{
 				numfeatures = numfeatures +  1;
@@ -376,7 +384,7 @@ SCMIRAudioFile {
 			};
 
 			//LocalBuf so no issue with FFT buffer number being 0 and ineffective trigger
-			trig=chromafft;
+			trig = chromafft;
 
 			features= [];
 
@@ -458,6 +466,9 @@ SCMIRAudioFile {
 				\OnsetStatistics,{
 					//window size, threshold
 					OnsetStatistics.kr(Onsets.kr(FFT(LocalBuf(512),input),featuregroup[2] ? 0.125),featuregroup[1] ? 2.0);
+				},
+				\CustomFeature,{
+					featuregroup[1].(input);
 				}
 				));
 
@@ -635,8 +646,6 @@ SCMIRAudioFile {
 
 		//SCMIR.processWait("scsynth");
 
-
-
 		//LOAD FEATURES
 		//Have to be careful; Little Endian is standard for Intel processors
 		file = SCMIRFile(analysisfilename,"rb");
@@ -652,7 +661,7 @@ SCMIRAudioFile {
 		};
 
 		temp = numframes*numfeatures;
-		featuredata= FloatArray.newClear(temp);
+		featuredata = FloatArray.newClear(temp);
 
 //		temp.do{|i|
 //
@@ -667,7 +676,7 @@ SCMIRAudioFile {
 
 			file.close;
 
-			featuredata=nil;
+			featuredata = nil;
 
 			SCMIR.clearResources;
 
@@ -675,7 +684,7 @@ SCMIRAudioFile {
 			file.getInt32LE;
 			file.getInt32LE;
 
-			onsetdata= FloatArray.newClear(temp);
+			onsetdata = FloatArray.newClear(temp);
 			file.readLE(featuredata);
 		};
 
@@ -742,6 +751,9 @@ SCMIRAudioFile {
 			},
 			\OnsetStatistics,{
 					numberlinked = 3;
+			},
+			\CustomFeature,{
+					numberlinked = featurenow[2]?1;
 			}
 			);
 

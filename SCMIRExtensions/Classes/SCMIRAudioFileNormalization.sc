@@ -187,6 +187,8 @@
 			var numberlinked = 1;
 			var numfeaturesnow = 1;
 
+			//featurenow.postln;
+
 			//normtype now preset; just Chromagram as multi feature norm
 
 			switch(featurenow[0].asSymbol,
@@ -215,6 +217,10 @@
 			},
 			\OnsetStatistics,{
 					numfeaturesnow = 3;
+			},
+			\CustomFeature,{
+					//1 output only if nil, else supplied
+					numfeaturesnow = (featurenow[2]?1);
 			},
 			\PolyPitch,{
 
