@@ -1,5 +1,19 @@
 + SCMIRAudioFile {
 
+	//requires MathLib extension quark
+	featureQuantiles {|array which=0 num=1 numquantiles=10|
+
+		var target;
+
+		target = Array.fill(num,{|i| array[which+i,numfeatures+which+i..]}).flatten;
+
+		//(numquantiles-1)
+		^target.percentile((1.0/numquantiles)*(0,1..numquantiles));
+
+	}
+
+
+
 	featureRange {|array,which=0,num=1|
 
 		var val, minval, maxval;
@@ -126,42 +140,42 @@
 
 	normalizeFeature { |array, which=0, num=1, useglobal=false|
 
-		  var maxval, minval, maxminusminr;
-		  var top= num-1;
-		  var temp, val;
+		var maxval, minval, maxminusminr;
+		var top= num-1;
+		var temp, val;
 
 
-		  if(useglobal){
+		if(useglobal){
 
 			#minval, maxval = SCMIR.lookupGlobalFeatureNorms(which);
-		  } {
+		} {
 
-			 #minval, maxval = this.featureRange(array,which,num);
-			};
+			#minval, maxval = this.featureRange(array,which,num);
+		};
 
 
-		  if(maxval!=minval) {
+		if(maxval!=minval) {
 
-		  maxminusminr = 1.0/(maxval-minval);
+			maxminusminr = 1.0/(maxval-minval);
 
-		  temp = which;
+			temp = which;
 
-		  for(0,numframes-1,{|i|
+			for(0,numframes-1,{|i|
 
-			for(temp,temp+top,{|j|
+				for(temp,temp+top,{|j|
 
-				val = array[j];
+					val = array[j];
 
-				array[j] = (val-minval)*maxminusminr;
+					array[j] = (val-minval)*maxminusminr;
 
+				});
+
+				temp = temp+ numfeatures;
 			});
-
-			temp = temp+ numfeatures;
-		});
 
 		} {
 
-		//everything is already just one value, leave array alone
+			//everything is already just one value, leave array alone
 
 		};
 
@@ -169,8 +183,66 @@
 	}
 
 
+	quantileFeature { |array, which=0, num=1, numquantiles=10, useglobal=false|
+
+		var percentiles, numqr;
+		//maxminusminr, minval, maxval;
+		var top = num-1;
+		var temp, val;
+
+		if(useglobal){
+
+			percentiles = SCMIR.lookupGlobalFeatureNorms(which)[0];
+			numquantiles = percentiles.size-1;
+
+		} {
+
+			percentiles = this.featureQuantiles(array,which,num,numquantiles);
+		};
+
+		//minval = percentiles[0];
+		//maxval = percentiles[percentiles.size-1];
+
+		///if(maxval!=minval) {
+
+		//maxminusminr = 1.0/(maxval-minval);
+
+		numqr = numquantiles.reciprocal;
+
+		temp = which;
+
+		//[which,num, percentiles].postcs;
+
+		for(0,numframes-1,{|i|
+
+			for(temp,temp+top,{|j|
+
+				val = array[j];
+
+				//can floor if aiming for discrete classes as output; actually easy to convert later via histo/floor
+				array[j] =  percentiles.indexInBetween(val)/numquantiles; //(val-minval)*maxminusminr;
+
+			});
+
+			temp = temp+ numfeatures;
+		});
+
+		//}
+
+		//{
+
+		//everything is already just one value, leave array alone
+
+		//};
+
+		^array;
+	}
+
+
+
 
 	//also called as part of extract features
+	//quantilecalculationproportion=1.0 could throwaway some of the calculating data, should always keep max and min Item?
 	normalize { |array, getstats=false, useglobal=false|
 
 		var offset;
@@ -180,7 +252,18 @@
 
 		//numframes = 	SCMIR.soundfile.numFrames-1;
 
-		if(getstats) {stats = [nil!numfeatures,nil!numfeatures]; };
+		if(getstats) {
+
+			//if( (normalizationtype == 0) or: (normalizationtype == 1)) {
+
+			//not needed for normtype 2 but preserved for sake of other code
+				stats = [nil!numfeatures,nil!numfeatures];
+			//}
+			//{
+				//stats = nil!numfeatures; //providing whole set of numbers for quantile normalisation
+			//};
+
+		};
 
 		featureinfo.do{|featurenow|
 
@@ -192,97 +275,150 @@
 			//normtype now preset; just Chromagram as multi feature norm
 
 			switch(featurenow[0].asSymbol,
-			\MFCC,{
-				numfeaturesnow = featurenow[1];
+				\MFCC,{
+					numfeaturesnow = featurenow[1];
 
-				//this means do overall normalization
-				if(featurenow.size>=3,{
+					//this means do overall normalization
+					if(featurenow.size>=3,{
 
-				numfeaturesnow = 1;
-				numberlinked = featurenow[1];
-				});
-			},
-			\Chromagram,{
+						numfeaturesnow = 1;
+						numberlinked = featurenow[1];
+					});
+				},
+				\Chromagram,{
 
-				numberlinked = featurenow[1];
-			},
-			\SpectralEntropy,{
+					numberlinked = featurenow[1];
+				},
+				\SpectralEntropy,{
 
-				//numberlinked = featurenow[1];
-				//don't inter-link by default
-				numfeaturesnow = featurenow[1];
-			},
-			\Tartini,{
+					//numberlinked = featurenow[1];
+					//don't inter-link by default
+					numfeaturesnow = featurenow[1];
+				},
+				\Tartini,{
 					numfeaturesnow = if(featurenow.size==1,1,2);
-			},
-			\OnsetStatistics,{
+				},
+				\OnsetStatistics,{
 					numfeaturesnow = 3;
-			},
-			\CustomFeature,{
+				},
+				\BeatStatistics,{
+					numfeaturesnow = 4;
+				},
+				\CustomFeature,{
 					//1 output only if nil, else supplied
 					numfeaturesnow = (featurenow[2]?1);
-			},
-			\PolyPitch,{
 
-				numfeaturesnow = (2*featurenow[1])+1;
-			},
-			\PianoPitch,{
+					//this means do overall normalization
+					if(featurenow.size>=4,{
 
-				numfeaturesnow = 88;
-			}
+						numberlinked = numfeaturesnow;
+						numfeaturesnow = 1;
+
+					});
+
+				},
+				\PolyPitch,{
+
+					numfeaturesnow = (2*featurenow[1])+1;
+				},
+				\PianoPitch,{
+
+					numfeaturesnow = 88;
+				}
 			);
 
 
 			if(getstats) {
 
-			numfeaturesnow.do{|i|
+				numfeaturesnow.do{|i|
 
-			if(normalizationtype==0) {
+					switch(normalizationtype,0,{
 
-			//normalize
+						//normalize
 
-				#temp1, temp2 = this.featureRange(array,offset,numberlinked);
+						#temp1, temp2 = this.featureRange(array,offset,numberlinked);
 
-				stats[0][offset..(offset+numberlinked-1)] = temp1;
-				stats[1][offset..(offset+numberlinked-1)] = temp2;
+						stats[0][offset..(offset+numberlinked-1)] = temp1;
+						stats[1][offset..(offset+numberlinked-1)] = temp2;
 
-				//[temp1, temp2];
+								//[temp1, temp2];
+						},1,{
+
+							//standardize
+
+							temp1 = this.featureMean(array,offset,numberlinked);
+							temp2 = this.featureVariance(array,offset,numberlinked,temp1).sqrt;
+
+							//stats[offset..(offset+numberlinked-1)] = [temp1, temp2];
+							stats[0][offset..(offset+numberlinked-1)] = temp1;
+							stats[1][offset..(offset+numberlinked-1)] = temp2;
+
+						},{
+							//default as last function in switch
+
+
+							//[featurenow,numberlinked, numfeaturesnow, stats.size].postln;
+
+							//quantile; take negative of normalizationtype for number of quantiles, default 10
+
+							//var numquantiles = 10; //10% quantiles
+							//var target;
+							//if(normalizationtype.isInteger && normalizationtype<0) {numquantiles = normalizationtype.neg; };
+
+
+							temp1 = Array.fill(numberlinked,{|j| array[offset+j,numfeatures+offset+j..]}).flatten;
+
+							//temp1 = this.featureQuantiles(array,offset,numberlinked,numquantiles);
+							//..(offset+numberlinked-1)
+							stats[0][offset] = temp1; //[temp1,numquantiles]; //nils in other entries for linked since no use, will need to write back later once have results
+
+							//if(numberlinked>1) {
+							//stats[offset+1..(offset+numberlinked-1)] = nil;
+							//};
+
+							//target = Array.fill(numberlinked,{|i| array[offset+i,numfeatures+offset+i..]}).flatten;
+
+							//requires MathLib extension quark
+
+							//(numquantiles-1)
+							//stats[offset..(offset+numberlinked-1)] = target.percentile((1.0/numquantiles)*(0,1..numquantiles));
+							//after normalisation top always 1.0?
+
+					});
+
+					offset = offset + numberlinked;
+				};
+
+
 			} {
 
-			//standardize
+				numfeaturesnow.do{|i|
 
-				temp1 = this.featureMean(array,offset,numberlinked);
-				temp2 = this.featureVariance(array,offset,numberlinked,temp1).sqrt;
+					switch(normalizationtype,0,{
 
-				//stats[offset..(offset+numberlinked-1)] = [temp1, temp2];
-				stats[0][offset..(offset+numberlinked-1)] = temp1;
-				stats[1][offset..(offset+numberlinked-1)] = temp2;
+						//normalize
 
-			};
+						array = this.normalizeFeature(array,offset,numberlinked,useglobal);
 
-				offset = offset + numberlinked;
-			}
+						},1,{
 
-			} {
+							//standardize
 
-			numfeaturesnow.do{|i|
+							array = this.standardizeFeature(array,offset,numberlinked,useglobal);
 
-			if(normalizationtype==0) {
+						},{
 
-			//normalize
+							//quantile
+							var numquantiles = 10; //10% quantiles
 
-				array = this.normalizeFeature(array,offset,numberlinked,useglobal);
+							if(normalizationtype.isInteger && normalizationtype<0) {numquantiles = normalizationtype.neg; };
 
-			} {
+							array = this.quantileFeature(array,offset,numberlinked,numquantiles,useglobal);
 
-			//standardize
+					});
 
-				array = this.standardizeFeature(array,offset,numberlinked,useglobal);
-
-			};
-
-				offset = offset + numberlinked;
-			}
+					offset = offset + numberlinked;
+				}
 
 			}
 

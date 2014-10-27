@@ -400,7 +400,7 @@ SCMIR {
 	}
 
 	//run normalization procedures for all standard features over all filenames in list, obtaining global max and min, and mean and stddev
-	*findGlobalFeatureNorms {|filenamelist, featureinfo, normalizationtype=0,filestart=0,filedur=0|
+	*findGlobalFeatureNorms {|filenamelist, featureinfo, normalizationtype=0,filestart=0,filedur=0,numquantiles=10|
 
 		var e;
 		var norms;
@@ -427,7 +427,7 @@ SCMIR {
 
 		};
 
-		if(normalizationtype==0) {
+		switch(normalizationtype,0,{
 
 			//normalize
 			temp1 = norms[0][0][0];
@@ -443,7 +443,7 @@ SCMIR {
 			//combine
 			globalfeaturenorms = [temp1,temp2];
 
-		} {
+		},1,{
 
 			//standardize
 			framesumr = 1.0/framesum;
@@ -460,7 +460,59 @@ SCMIR {
 
 			globalfeaturenorms = [temp1,temp2.sqrt]; //to stddev from variance at this point
 
-		};
+		},{
+
+			//quantilisation
+				var lastworking = 0;
+
+				globalfeaturenorms = {[]}!(norms[0][0][0].size);
+
+				//accumulate all data over files
+				norms.do{|val|
+
+					var rawdata = val[0][0];
+					//var numframes = val[1];
+
+					rawdata.do{|datapoints,i|
+
+						if(datapoints.notNil) {
+
+							globalfeaturenorms[i] = globalfeaturenorms[i] ++ datapoints;
+
+							};
+
+					};
+
+				};
+
+				//find quantiles, could be slow for larger array and sorting
+				globalfeaturenorms = globalfeaturenorms.collect{|datapoints,i|
+
+					("finding quantile "++ i).postln;
+
+					if(datapoints.notNil,{
+
+						datapoints.percentile((1.0/numquantiles)*(0,1..numquantiles));
+
+					},nil);
+
+				};
+
+				//copies for connected features in groups
+				globalfeaturenorms.do{|info,i|
+
+					if(info.isNil) {
+						globalfeaturenorms[i] = globalfeaturenorms[lastworking];
+					} {
+						lastworking = i;
+					}
+
+				};
+
+				//required for compatibility with the way norm and standardisation achieved
+				globalfeaturenorms = [globalfeaturenorms,[]];
+
+		});
 
 
 		^durations

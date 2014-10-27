@@ -306,16 +306,16 @@
 
 		var array, index;
 		var startframe, endframe;
-		var timeperframe= SCMIR.hoptime; //0.023219954648526;
+		var timeperframe = SCMIR.hoptime; //0.023219954648526;
 
 		endtime = endtime ? duration;
 
-		if(starttime<0.0) {starttime= 0.0};
-		if(starttime>duration) {starttime= 0.0};
+		if(starttime<0.0) {starttime = 0.0};
+		if(starttime>duration) {starttime = 0.0};
 
-		if(endtime>duration) {endtime= duration};
+		if(endtime>duration) {endtime = duration};
 
-		if(endtime<starttime) { endtime= duration;};
+		if(endtime<starttime) { endtime = duration;};
 
 		startframe = min((starttime/timeperframe).asInteger,numframes-1);
 

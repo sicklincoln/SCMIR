@@ -23,9 +23,23 @@ There is a small bug in the SC MFCC code in SuperCollider 3.4. Fixed in develope
 
 Change Log and Announcements:
 
+
+SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis: version 1.5
+
+'quantile normalisation'/histrogram equalisation/percentiles as normalisation method (normalisationtype 2; you can choose the number of quantiles by putting a negative number as normalisationtype, e.g. -15 gives 15 quantiles)
+
+
+
+
+Now at composerprogrammer.com:
+http://composerprogrammer.com/code.html
+http://composerprogrammer.com/code/SCMIR.zip
+
+
+
 1.4
 
-SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis; version 1.4
+SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis: version 1.4
 
 CustomFeature: use any closed function definition for feature extraction. See customfeature.scd in examples
 
@@ -42,7 +56,7 @@ http://composerprogrammer.com/code/SCMIR.zip
 
 1.3
 
-SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis; version 1.3
+SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis: version 1.3
 
 Added extractFeaturesWithWindowing() function to directly call window size and hop size aggregation for features
 Coverage for some extra third party features
@@ -56,7 +70,7 @@ http://composerprogrammer.com/code/SCMIR.zip
 
 1.2
 
-SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis; version 1.2
+SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis: version 1.2
 
 save and load for MarkovPool
 extra options for Chromagram to match new arguments made available in SCMIRPlugins
@@ -67,7 +81,7 @@ NeuralNet save/load, extra segmentation option via start and end times per segme
 
 Latest release of SCMIR
 
-SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis; version 1.1
+SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis: version 1.1
 
 new additions and changes:
 Machine learning classes:
@@ -89,7 +103,7 @@ http://www.dur.ac.uk/nick.collins/code/SCMIR.zip
 
 1.0
 
-SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis; version 1.0
+SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis: version 1.0
 
 new additions and changes:
 Miscellaneous bug fixes and rationalisations, some convenience methods added

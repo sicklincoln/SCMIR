@@ -300,6 +300,9 @@ SCMIRAudioFile {
 			\OnsetStatistics, {
 				numfeatures = numfeatures + 3;
 			},
+			\BeatStatistics, {
+				numfeatures = numfeatures + 4;
+			},
 			\CustomFeature,{
 					//1 output only if nil, else supplied
 					numfeatures = numfeatures + (featuregroup[2]?1);
@@ -362,11 +365,12 @@ SCMIRAudioFile {
 
 	*resolveFeatures {|input, featurehop, featureinfo|
 		var trig, chain, centroid, features;
-		var mfccfft, chromafft, specfft, onsetfft, spec2fft;
+		var mfccfft, chromafft, specfft, onsetfft, spec2fft, beatfft;
 		var fftsizetimbre = 1024;
 		var fftsizepitch = 4096; //for chromagram, pitch detection
 		var fftsizespec = 2048;
 		var fftsizeonset = SCMIR.framehop; //512 or 1024; //should really be 512 with 256 overlap, but need to conform to general frame size choice
+		var fftsizebeat = 1024;
 
 		if (featurehop == 1024) {
 			mfccfft = FFT(LocalBuf(fftsizetimbre,1),input,1, wintype:1);
@@ -374,6 +378,8 @@ SCMIRAudioFile {
 			//for certain spectral features
 			specfft = FFT(LocalBuf(fftsizespec,1),input,0.5, wintype:1);
 			onsetfft = FFT(LocalBuf(fftsizeonset,1),input,1);
+			//always 50% overlap and 1024 fft size for BeatStatistics
+			beatfft = FFT(LocalBuf(fftsizebeat,1),input,0.5, wintype:1);
 			} {
 			//else it should be 512
 			mfccfft = FFT(LocalBuf(fftsizetimbre,1),input,0.5, wintype:1);
@@ -381,6 +387,7 @@ SCMIRAudioFile {
 			//for certain spectral features
 			specfft = FFT(LocalBuf(fftsizespec,1),input,0.25, wintype:1);
 			onsetfft = FFT(LocalBuf(fftsizeonset,1),input,1); //will be smaller to start with
+			beatfft = FFT(LocalBuf(fftsizebeat,1),input,0.5, wintype:1);
 			};
 
 			//LocalBuf so no issue with FFT buffer number being 0 and ineffective trigger
@@ -466,6 +473,10 @@ SCMIRAudioFile {
 				\OnsetStatistics,{
 					//window size, threshold
 					OnsetStatistics.kr(Onsets.kr(FFT(LocalBuf(512),input),featuregroup[2] ? 0.125),featuregroup[1] ? 2.0);
+				},
+				\BeatStatistics,{
+					//window size, threshold
+					BeatStatistics.kr(beatfft,featuregroup[1] ? 0.995, featuregroup[2] ? 4);
 				},
 				\CustomFeature,{
 					featuregroup[1].(input);
@@ -751,6 +762,9 @@ SCMIRAudioFile {
 			},
 			\OnsetStatistics,{
 					numberlinked = 3;
+			},
+			\BeatStatistics,{
+					numberlinked = 4;
 			},
 			\CustomFeature,{
 					numberlinked = featurenow[2]?1;
