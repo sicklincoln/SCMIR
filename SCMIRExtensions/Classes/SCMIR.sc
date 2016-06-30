@@ -400,7 +400,7 @@ SCMIR {
 	}
 
 	//run normalization procedures for all standard features over all filenames in list, obtaining global max and min, and mean and stddev
-	*findGlobalFeatureNorms {|filenamelist, featureinfo, normalizationtype=0,filestart=0,filedur=0,numquantiles=10|
+	*findGlobalFeatureNorms {|filenamelist, featureinfo, normalizationtype=0,filestart=0,filedur=0,numquantiles=10,whichchannel|
 
 		var e;
 		var norms;
@@ -417,9 +417,12 @@ SCMIR {
 
 			e = SCMIRAudioFile(filename,featureinfo, normalizationtype,filestart,filedur);
 
-			e.extractFeatures(false);
+			//if nil passed in, will pass on nil and thence go with standard behaviour
+			e.extractFeatures(false,whichchannel:whichchannel);
 
 			norms[j] = [e.normalize(e.featuredata, true), e.numframes];
+
+			norms[j].postln;
 
 			durations[j] = e.duration;
 

@@ -88,7 +88,7 @@ SCMIRAudioFile {
 
 		//if (filename.pathMatch.isEmpty,{}); //existence check
 		//check for MP3, create temp .wav file if necessary
-		if((PathName(filename).extension) =="mp3") {
+		if( ((PathName(filename).extension) =="mp3") || ((PathName(filename).extension) =="MP3")) {
 
 			//have to convert whole thing
 			filename = this.resolveMP3(filename);
@@ -141,7 +141,7 @@ SCMIRAudioFile {
 
 			},{
 
-			"SCMIRAudioFile: soundfile failed to load, wrong path?".postln;
+				["SCMIRAudioFile: soundfile failed to load, wrong path?",filename].postln;
 		});
 
 
@@ -479,7 +479,7 @@ SCMIRAudioFile {
 					BeatStatistics.kr(beatfft,featuregroup[1] ? 0.995, featuregroup[2] ? 4);
 				},
 				\CustomFeature,{
-					featuregroup[1].(input);
+					featuregroup[1].(input,mfccfft); //also pass in trigger in case useful for sync
 				}
 				));
 
@@ -541,7 +541,7 @@ SCMIRAudioFile {
 
 
 	//must be called within a fork? How to enforce, test that?
-	extractFeatures {|normalize=true, useglobalnormalization=false| //|writefeaturefile= false|
+	extractFeatures {|normalize=true, useglobalnormalization=false, whichchannel| //|writefeaturefile= false|
 
 //		var fftsizetimbre = 1024;
 //		var fftsizepitch = 4096; //for chromagram, pitch detection
@@ -572,11 +572,19 @@ SCMIRAudioFile {
 
 			env=EnvGen.ar(Env([1,1],[length]),doneAction:2);
 			//stereo made mono
-			input= if(numChannels==1,{
+			input= if(whichchannel.isNil,{if(numChannels==1,{
 				PlayBuf.ar(1, playbufnum, BufRateScale.kr(playbufnum), 1, 0, 0);
 				},{
 
 				Mix(PlayBuf.ar(numChannels, playbufnum, BufRateScale.kr(playbufnum), 1, 0, 0))/numChannels;
+
+			});
+				},{
+				//choice of channel
+					//PlayBuf.ar(numChannels, playbufnum, BufRateScale.kr(playbufnum), 1, 0, 0)[whichchannel]
+
+				//buffer only loaded a specific channel already
+				PlayBuf.ar(1, playbufnum, BufRateScale.kr(playbufnum), 1, 0, 0);
 
 			});
 
@@ -629,7 +637,9 @@ SCMIRAudioFile {
 
 		//[0.0, [\b_allocRead, 0, sourcepath, 0, 0]],
 
-		[0.0, [\b_allocRead, 0, sourcepath, loadstart, loadframes]],   //loadframes
+			if(whichchannel.isNil,{[0.0, [\b_allocRead, 0, sourcepath, loadstart, loadframes]]},{
+			[0.0, [\b_allocReadChannel, 0, sourcepath, loadstart, loadframes, whichchannel]]
+			}),   //loadframes
 
 		[0.0, [ \s_new, \SCMIRAudioFileFeatures, 1000, 0, 0,\playbufnum,0,\length, duration]], //plus any params for fine tuning
 		//[0.0,[\u_cmd, 1000, ugenindex, "createfile",analysisfilename]],
