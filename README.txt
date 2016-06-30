@@ -6,6 +6,7 @@ composerprogrammer.com
 
 For SuperCollider 3, all code under GNU GPL 3 license, see COPYING file.
 
+Version 1.5+ tested on SC 3.7
 Version 1.2+ tested on SC 3.6
 Version 0.9+ tested on SC 3.5 (and basic tests on 3.6)
 Version up to 0.8 tested extensively under SC3.4.4 on OS X
@@ -24,12 +25,15 @@ There is a small bug in the SC MFCC code in SuperCollider 3.4. Fixed in develope
 Change Log and Announcements:
 
 
+1.5
+
 SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis: version 1.5
 
+Fixes for SC 3.7 and other miscellaneous bug fixes
+
+added KNearestNeighbour class
+
 'quantile normalisation'/histrogram equalisation/percentiles as normalisation method (normalisationtype 2; you can choose the number of quantiles by putting a negative number as normalisationtype, e.g. -15 gives 15 quantiles)
-
-
-
 
 Now at composerprogrammer.com:
 http://composerprogrammer.com/code.html
