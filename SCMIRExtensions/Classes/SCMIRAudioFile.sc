@@ -18,11 +18,11 @@ SCMIRAudioFile {
 
 	//var normgroups;
 
-	*new {|filename, featureinfo, normtype=0, start=0, dur=0|
+	*new {|filename, featureinfo, normtype=0, start=0, dur=0, nonunique=true|
 
 		if (filename.isNil,{"Meta_SCMIRAudioFile:new no filename provided".postln; ^nil});
 
-		^super.new.initSCMIRAudioFile(filename, featureinfo, normtype, start, dur);
+		^super.new.initSCMIRAudioFile(filename, featureinfo, normtype, start, dur, nonunique);
 
 	}
 
@@ -83,7 +83,7 @@ SCMIRAudioFile {
 	}
 
 
-	initSCMIRAudioFile {|filename, fi, normtype=0, start=0, dur=0|
+	initSCMIRAudioFile {|filename, fi, normtype=0, start=0, dur=0, nonunique=true|
 		var loadtemp;
 
 		//if (filename.pathMatch.isEmpty,{}); //existence check
@@ -91,7 +91,7 @@ SCMIRAudioFile {
 		if( ((PathName(filename).extension) =="mp3") || ((PathName(filename).extension) =="MP3")) {
 
 			//have to convert whole thing
-			filename = this.resolveMP3(filename);
+			filename = this.resolveMP3(filename,nonunique:nonunique);
 
 		};
 
@@ -563,7 +563,7 @@ SCMIRAudioFile {
 		//featuresforbeats = false;
 		featuresbysegments = false;
 
-		//mono input only
+		//mono input typically (can load stereo or above but assumes later feature extractors reduce from multichannel to less size output)
 		def = SynthDef(\SCMIRAudioFileFeatures,{arg playbufnum, length;
 			var env, input, features, trig;
 		//	var , chain, centroid, ;
@@ -583,9 +583,16 @@ SCMIRAudioFile {
 				//choice of channel
 					//PlayBuf.ar(numChannels, playbufnum, BufRateScale.kr(playbufnum), 1, 0, 0)[whichchannel]
 
+
+				if(whichchannel>=0) {
 				//buffer only loaded a specific channel already
 				PlayBuf.ar(1, playbufnum, BufRateScale.kr(playbufnum), 1, 0, 0);
+					}
+					{ //else multichannel mode, must be compatible with later feature extractors else will be trouble... assumes render from multiple inputs to one output stream
 
+PlayBuf.ar(whichchannel.neg, playbufnum, BufRateScale.kr(playbufnum), 1, 0, 0);
+
+					}
 			});
 
 			//get features
@@ -638,7 +645,15 @@ SCMIRAudioFile {
 		//[0.0, [\b_allocRead, 0, sourcepath, 0, 0]],
 
 			if(whichchannel.isNil,{[0.0, [\b_allocRead, 0, sourcepath, loadstart, loadframes]]},{
+
+				if(whichchannel>=0) {
+
 			[0.0, [\b_allocReadChannel, 0, sourcepath, loadstart, loadframes, whichchannel]]
+				} {
+					//if multichannel load, take as many channels as in sound file, nothing fancy
+			[0.0, [\b_allocRead, 0, sourcepath, loadstart, loadframes]]
+				}
+
 			}),   //loadframes
 
 		[0.0, [ \s_new, \SCMIRAudioFileFeatures, 1000, 0, 0,\playbufnum,0,\length, duration]], //plus any params for fine tuning

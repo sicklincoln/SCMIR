@@ -75,7 +75,7 @@ SCMIRLive {
 	}
 
 
-	createSynthDef {|synthdefcalled, normalize=true, sendosc=true, controlbusses=true, clip=false|
+	createSynthDef {|synthdefcalled, normalize=true, sendosc=true, controlbusses=true, clip=false, stereotomono=false |
 		var fftsizetimbre = 1024;
 		var fftsizepitch = 4096; //for chromagram, pitch detection
 		var fftsizespec = 2048;
@@ -90,8 +90,12 @@ SCMIRLive {
 //			var mfccfft, chromafft, specfft, onsetfft;
 			var featuresave;
 
-			input= In.ar(in,1); //mono only
+			if(stereotomono) {
+				input= Mix(In.ar([in,in+1],1))*0.5; //stereo to mono
 
+			} {
+			input= In.ar(in,1); //mono only
+			};
 
 			#features, trig = SCMIRAudioFile.resolveFeatures(input,featurehop,featureinfo);
 

@@ -3,6 +3,18 @@ Installation on Linux:
 
 Advice from a more recent attempt to build:
 
+ you may also want to update the installLinux file with 2 small things:
+the line 
+cp -r /path/to/SCMIR0.9/SCMIRExtensions/SCMIR ~/.local/share/SuperCollider/Extensions/ 
+should now be 
+cp -r /path/to/SCMIR/SCMIRExtensions ~/.local/share/SuperCollider/Extensions/
+
+You can also put a comments that when checking where libgsl is installed in the system:
+ld -lgsl --verbose
+users will see warning about missing cblas which is confusing but not material. 
+Oded
+
+
 linux building:
 Hello,
 I think I solved the problems. If you want to update the linux install file here is some additional information. in the CMakeList file the part about LIBGSL the correct location may depend on the individual system. For me this library was installed in /lib64
