@@ -463,7 +463,72 @@ SCMIR {
 
 			globalfeaturenorms = [temp1,temp2.sqrt]; //to stddev from variance at this point
 
-		},{
+		},2,{
+			//IQR median normalisation
+			//https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.RobustScaler.html
+			//find median and 25% to 75% range. Take off median and divide by this range
+
+				var lastworking = 0;
+
+				globalfeaturenorms = {[]}!(norms[0][0][0].size);
+
+				//accumulate all data over files
+				norms.do{|val|
+
+					var rawdata = val[0][0];
+					//var numframes = val[1];
+
+					rawdata.do{|datapoints,i|
+
+						if(datapoints.notNil) {
+
+							globalfeaturenorms[i] = globalfeaturenorms[i] ++ datapoints;
+
+							};
+
+					};
+
+				};
+
+				//find quantiles, could be slow for larger array and sorting
+				globalfeaturenorms = globalfeaturenorms.collect{|datapoints,i|
+
+				var results, iqr;
+
+					("finding quartiles "++ i).postln;
+
+					if(datapoints.notNil,{
+
+					results = datapoints.percentile([0.25,0.5,0.75],false);
+
+					//median, range
+
+					iqr = results[2] - results[0];
+
+					if(iqr< 0.000000001) {iqr = 1}; //unsafe
+
+					[results[1],iqr]
+
+					},nil);
+
+				};
+
+				//copies for connected features in groups
+				globalfeaturenorms.do{|info,i|
+
+					if(info.isNil) {
+						globalfeaturenorms[i] = globalfeaturenorms[lastworking];
+					} {
+						lastworking = i;
+					}
+
+				};
+
+			//split to two arrays [medians],[iqrs]
+			globalfeaturenorms = [globalfeaturenorms.collect{|val| val[0]},globalfeaturenorms.collect{|val| val[1]}];
+
+		},
+			{
 
 			//quantilisation
 				var lastworking = 0;

@@ -305,6 +305,28 @@
 
 				averagevector = stddevs;
 			},
+			4,
+				{
+				//median
+					var perfeaturearrays = {List[]}!numfeatures;
+
+					//List[2,4,3,6.1,5,8,7,6,5,8.2,7,6,5].median
+
+				for(framenow, framenext, {|j|
+
+					numfeatures.do{|k|
+
+							perfeaturearrays[k].add(featuredata[pos+k]);
+					};
+
+					pos = pos + numfeatures;
+
+				});
+
+				averagevector = perfeaturearrays.collect{|list| list.median;};
+
+			},
+
 			);
 
 			pos = numfeatures*i;

@@ -239,7 +239,7 @@ SCMIRSimilarityMatrix {
 	//may need some way to check original audio file lengths for time positions accurately in seconds
 	//will crash if matrix is not a symmetric matrix as an array of arrays
 	//no axes drawn, just direct plot with fixed border of 20
-	plot {|stretch=1, power=5, path, drawlabels=false, tickstep=10, tickoffset=0|
+	plot {|stretch=1, power=5, path, drawlabels=false, tickstep=10, tickoffset=0, showvalues=false, userlabels|
 
 		var window, uview, background=Color.white;
 		var xsize = reducedcolumns*stretch;
@@ -294,6 +294,10 @@ SCMIRSimilarityMatrix {
 						Pen.addRect(Rect(x,y,stretch,stretch));
 						Pen.fill;
 
+						if(showvalues) {
+							matrix[pos+j].round(0.0001).asString.drawAtPoint((x+(stretch.div(4)))@(y+(stretch.div(3))),font, Color.red);
+						}
+
 					}
 
 				};
@@ -328,7 +332,7 @@ SCMIRSimilarityMatrix {
 
 				[tickstep, reducedcolumns,(0,tickstep..reducedcolumns)].postln;
 
-				(0,tickstep..reducedcolumns).do{|i|
+				(0,tickstep..(reducedcolumns-1)).do{|i|
 
 					var x = (i*stretch)+border;
 
@@ -336,13 +340,13 @@ SCMIRSimilarityMatrix {
 
 					Pen.lineTo(x@totaly);
 
-					(i+tickoffset).asString.drawAtPoint((x+2)@xaxisy,font, Color.blue);
+					if(userlabels.notNil,userlabels[i],(i+tickoffset)).asString.drawAtPoint((x+2)@xaxisy,font, Color.blue);
 
 				};
 
 				Pen.stroke;
 
-				(0,tickstep..reducedrows).do{|j|
+				(0,tickstep..(reducedrows-1)).do{|j|
 					var y;
 					var tmpx, tmpy;
 
@@ -356,7 +360,7 @@ SCMIRSimilarityMatrix {
 					tmpy = y; //+(0.1*halfbordery);
 
 					Pen.rotate(-pi*0.5,tmpx,tmpy);
-					(j+tickoffset).asString.drawAtPoint((tmpx+2)@(y-3),font, Color.blue);
+					if(userlabels.notNil,userlabels[j],(j+tickoffset)).asString.drawAtPoint((tmpx+2)@(y-3),font, Color.blue);
 					Pen.rotate(pi*0.5,tmpx,tmpy);
 
 				};

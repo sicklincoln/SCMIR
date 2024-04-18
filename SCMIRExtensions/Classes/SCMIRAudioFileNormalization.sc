@@ -70,6 +70,8 @@
 		^mean/numframes;
 	}
 
+
+
 	featureVariance {|array,which=0,num=1,mean=0.0|
 		var variance;
 		var temp, val;
@@ -94,6 +96,111 @@
 		^variance/numframes;
 	}
 
+
+	featureMedian {|array,which=0,num=1|
+		var temp;
+		var top = num-1;
+		var datanow;
+		var counter = 0;
+
+		temp = which;
+
+		datanow = Array.fill(numframes*num,0);
+
+		counter = 0;
+
+		for(0,numframes-1,{|i|
+
+			for(temp,temp+top,{|j|
+
+				datanow[counter] = array[j];
+
+				counter = counter + 1;
+			});
+
+			temp = temp+ numfeatures;
+		});
+
+		^datanow.median;
+	}
+
+
+	featureIQR {|array,which=0,num=1|
+		var temp;
+		var top = num-1;
+		var datanow;
+		var counter = 0;
+		var q, tq;
+
+		temp = which;
+
+		datanow = Array.fill(numframes*num,0);
+
+		counter = 0;
+
+		for(0,numframes-1,{|i|
+
+			for(temp,temp+top,{|j|
+
+				datanow[counter] = array[j];
+
+				counter = counter + 1;
+			});
+
+			temp = temp+ numfeatures;
+		});
+
+		datanow = datanow.sort;
+
+		//datanow.percentile([0.25,0.75],false);
+
+		//quarter
+		q = datanow[(datanow.size*0.25).asInteger];
+		//three quarters
+		tq = datanow[(datanow.size*0.75).asInteger];
+
+		if((tq-q)<0.00000000001) {^1.0};
+
+		^(tq - q);
+	}
+
+
+
+
+	robustScaleFeature { |array, which=0, num=1, useglobal=false|
+
+		var median, range, ranger;
+		var top= num-1;
+		var temp, val;
+
+		if(useglobal){
+
+			#median,range = SCMIR.lookupGlobalFeatureNorms(which);
+
+		} {
+			median = this.featureMedian(array,which,num);
+			range = this.featureIQR(array,which,num);
+		};
+
+		ranger = 1.0/range;
+
+		temp = which;
+
+		for(0,numframes-1,{|i|
+
+			for(temp,temp+top,{|j|
+
+				val = array[j];
+
+				array[j] = (val-median)*ranger;
+
+			});
+
+			temp = temp+ numfeatures;
+		});
+
+		^array;
+	}
 
 
 	standardizeFeature { |array, which=0, num=1, useglobal=false|
@@ -353,7 +460,23 @@
 							stats[0][offset..(offset+numberlinked-1)] = temp1;
 							stats[1][offset..(offset+numberlinked-1)] = temp2;
 
-						},{
+						},
+
+				/*	2, {
+
+						//https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.RobustScaler.html
+						//IQR median and range correction (more robust to outliers)
+
+						temp1 = this.featureMedian(array,offset,numberlinked);
+						temp2 = this.featureIQR(array,offset,numberlinked);
+
+						stats[0][offset..(offset+numberlinked-1)] = temp1;
+						stats[1][offset..(offset+numberlinked-1)] = temp2;
+
+
+					},*/
+
+					{
 							//default as last function in switch
 
 
@@ -406,7 +529,13 @@
 
 							array = this.standardizeFeature(array,offset,numberlinked,useglobal);
 
-						},{
+						},2, {
+
+
+						array = this.robustScaleFeature(array,offset,numberlinked,useglobal);
+
+
+					},{
 
 							//quantile
 							var numquantiles = 10; //10% quantiles
