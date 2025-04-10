@@ -13,6 +13,12 @@ SCMIR {
 	classvar <>lamelocation;
 	classvar <>nrtoutputfilename;
 	classvar <>nrtanalysisfilename;
+	classvar <>numcpus;
+	classvar <>nrtanalysisuniquenum;
+	classvar <>nrtanalysisuniquenumMax;
+	classvar <>nummp3tempfiles;
+	classvar <>mp3tempindex;
+
 
 	*initClass {
 
@@ -32,7 +38,17 @@ SCMIR {
 		//used to be packaged with scmirexec in classes directory, no longer
 		executabledirectory = SCMIR.filenameSymbol.asString.dirname.escapeChar($ )++"/../scmirexec/";
 
+		mp3tempindex = 0;
 
+		nummp3tempfiles = 1;
+
+		if(thisProcess.platform.name == \osx) {
+			numcpus = unixCmdGetStdOut("sysctl -n hw.ncpu").asInteger;
+
+			//[\sparrow, numcpus, numcpus.class].postln;
+
+			nummp3tempfiles = 3*numcpus + 1; //sort of a safe number?
+		};
 
 		//tempdir = SCMIR.filenameSymbol.asString.dirname++"/scmirtemp/";
 
@@ -45,6 +61,8 @@ SCMIR {
 		nrtoutputfilename = "/dev/null";
 		nrtanalysisfilename = tempdir++"NRTanalysis";
 
+		nrtanalysisuniquenum = 0;
+		nrtanalysisuniquenumMax = 256; //maximal number of unique SynthDefs created, for instance
 
 		//if no unix filenames support
 		if(thisProcess.platform.name.class == \windows) {

@@ -130,14 +130,14 @@ SCMIRAudioFile {
 			sourcedir = sourcepath.dirname;
 
 			if(SCMIR.tempdir.isNil,{
-				analysispath = sourcepath.dirname ++ "/";
+				analysispath = sourcedir ++ "/";
 				},{
 				analysispath = SCMIR.tempdir;
 			});
 
 			basename = sourcepath.basename;
 
-			basename= basename.copyRange(0,basename.findBackwards(".")-1);
+			basename = basename.copyRange(0,basename.findBackwards(".")-1);
 
 			},{
 
