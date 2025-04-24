@@ -6,6 +6,7 @@ composerprogrammer.com
 
 For SuperCollider 3, all code under GNU GPL 3 license, see COPYING file.
 
+Version 1.6 tested on SC 3.13
 Version 1.5+ tested on SC 3.7
 Version 1.2+ tested on SC 3.6
 Version 0.9+ tested on SC 3.5 (and basic tests on 3.6)
@@ -23,6 +24,14 @@ There is a small bug in the SC MFCC code in SuperCollider 3.4. Fixed in develope
 
 
 Change Log and Announcements:
+
+1.6
+
+SCMIR: SuperCollider Music Information Retrieval Library for audio content analysis: version 1.6
+
+Various fixes and additions from project testing over the years.
+
+Added experimental parallel feature extraction capability, giving a large speed up working over many audio files. 
 
 
 1.5
@@ -303,7 +312,3 @@ Nick
 
 http://www.cogs.susx.ac.uk/users/nc81/code.html
 http://www.cogs.susx.ac.uk/users/nc81/code/SCMIR.zip
-
-
-
-
