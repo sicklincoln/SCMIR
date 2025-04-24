@@ -417,6 +417,7 @@ SCMIR {
 		archive.close;
 	}
 
+
 	//run normalization procedures for all standard features over all filenames in list, obtaining global max and min, and mean and stddev
 	*findGlobalFeatureNorms {|filenamelist, featureinfo, normalizationtype=0,filestart=0,filedur=0,numquantiles=10,whichchannel|
 
@@ -425,6 +426,17 @@ SCMIR {
 		var framesum = 0, framesumr;
 		var temp1, temp2;
 		var durations;
+
+		//[\globalnormcheck, filenamelist[0].isInteger,filenamelist].postln;
+
+		if(filenamelist[0].isInteger) {
+
+			//precalculated, via parallel extraction
+			norms = filenamelist[1];
+			durations = filenamelist[2];
+			framesum = filenamelist[3];
+
+		} {
 
 		norms= nil!(filenamelist.size);
 		durations = 0.0!(filenamelist.size);
@@ -447,6 +459,8 @@ SCMIR {
 			framesum = framesum + e.numframes;
 
 		};
+		};
+
 
 		switch(normalizationtype,0,{
 

@@ -2,7 +2,7 @@
 
 + SCMIRAudioFile {
 	//must be called within a fork? How to enforce, test that?
-	extractFeaturesParallel {|normalize=true, useglobalnormalization=false, whichchannel, completionFunction, uniquenum|
+	extractFeaturesParallel {|normalize=true, useglobalnormalization=false, whichchannel, completionFunction, uniquenum, normstats=false|
 
 		var onunixcmdcompletion;
 
@@ -17,6 +17,13 @@
 		var def, defname;
 
 		("Extracting features for"+sourcepath).postln;
+
+
+		//[\normstats2,normstats].postln;
+
+
+
+
 
 		uniquenum = uniquenum ?? {SCMIR.nrtanalysisuniquenum = (SCMIR.nrtanalysisuniquenum + 1)%(SCMIR.nrtanalysisuniquenumMax); SCMIR.nrtanalysisuniquenum};
 
@@ -195,7 +202,27 @@ PlayBuf.ar(whichchannel.neg, playbufnum, BufRateScale.kr(playbufnum), 1, 0, 0);
 
 		file.close;
 
-		if(normalize && (numframes>=1)){featuredata = this.normalize(featuredata,false,useglobalnormalization);   };
+		if(normalize && (numframes>=1)){
+
+						//[\normstats3,normstats].postln;
+
+						if(normstats) {
+
+							//norms[j] = [e.normalize(e.featuredata, true), e.numframes];
+							featuredata = [this.normalize(featuredata,normstats),numframes];
+
+						//[\normstats4,featuredata].postln;
+
+						} {
+
+						//check use of useglobalnom
+							featuredata = this.normalize(featuredata,normstats,useglobalnormalization);
+
+						};
+
+						};
+
+
 
 		//temp= SCMIR.soundfile.numChannels;
 
