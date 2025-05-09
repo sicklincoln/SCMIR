@@ -1,7 +1,7 @@
 
 + SCMIR {
 
-
+	//classvar outputbackup;
 
 	//run normalization procedures for all standard features over all filenames in list, in parallel
 	*findGlobalFeatureNormsParallel {|filenamelist, featureinfo, normalizationtype=0,filestart=0,filedur=0,numquantiles=10,whichchannel|
@@ -26,6 +26,7 @@
 		var numactive = 0;
 		var maxactive = SCMIR.numcpus;
 		var numtorender;
+		var numscheduled = 0;
 		var numrendered = 0;
 		var time = Main.elapsedTime;
 		var increment = 0;
@@ -104,11 +105,11 @@
 
 			//var accumulatepids = List[];
 
-			while({numrendered<numtorender},{
+			while({numscheduled<numtorender},{
 
 				if(numactive<maxactive,{
 
-					numrendered = numrendered + 1;
+					numscheduled = numscheduled + 1;
 
 					numactive = numactive + 1;
 
@@ -122,15 +123,19 @@
 
 						//scmiraudiofile
 
+						numrendered = numrendered + 1;
+
 						//when finally finished
-						if(numactive==0) {
+						if(numrendered>=numtorender)
+						//if(numrendered == numtorender)
+						{
 
 							[\totaltime, Main.elapsedTime - time].postln;
 							oncompletion.(durations,outputdata, framesum);
 						};
 
 
-				},numrendered) });
+				},numscheduled) });
 
 				0.01.wait;
 				//1.wait;
