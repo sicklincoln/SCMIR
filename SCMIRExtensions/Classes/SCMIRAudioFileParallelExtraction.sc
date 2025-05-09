@@ -14,7 +14,7 @@
 		var normdata;
 		var ugenindex;
 		var file;
-		var def, defname;
+		var def, defname, defpath;
 
 		("Extracting features for"+sourcepath).postln;
 
@@ -28,6 +28,8 @@
 		uniquenum = uniquenum ?? {SCMIR.nrtanalysisuniquenum = (SCMIR.nrtanalysisuniquenum + 1)%(SCMIR.nrtanalysisuniquenumMax); SCMIR.nrtanalysisuniquenum};
 
 		defname = \SCMIRAudioFileFeatures ++ uniquenum;
+
+		defpath = (SynthDef.synthDefDir ++ defname ++ ".scsyndef").asUnixPath;
 
 		 //safety if called multiple times and switched to beats later
 		//featuresforbeats = false;
@@ -143,7 +145,13 @@ PlayBuf.ar(whichchannel.neg, playbufnum, BufRateScale.kr(playbufnum), 1, 0, 0);
 
 		serveroptions = ServerOptions.new;
 		serveroptions.numOutputBusChannels = 1; // mono output
+		//serveroptions.numOutputBusChannels
+		serveroptions.verbosity = -2;
+		//serveroptions.memSize = 81920*4;
+		//serveroptions.numBuffers = 2048;
+		//serveroptions.numWireBufs = 256;
 
+		//serveroptions.maxSynthDefs = 2048;
 
 		{
 
@@ -156,6 +164,16 @@ PlayBuf.ar(whichchannel.neg, playbufnum, BufRateScale.kr(playbufnum), 1, 0, 0);
 
 			//safety
 			0.1.wait;
+
+			//kill def file to avoid accumulation
+
+			//("rm "++ defpath).postcs;
+			("rm "++ defpath).unixCmd;
+					//"/Users/ioi/Library/Application Support/SuperCollider/synthdefs/SCMIRAudioFileFeatures7.scsyndef".asUnixPath
+
+			//SynthDescLib.hglobal.at(defname);
+			//SynthDescLib.global.at("SCMIRAudioFileFeatures27")
+			SynthDescLib.global.removeAt(defname);
 
 		//LOAD FEATURES
 		//Have to be careful; Little Endian is standard for Intel processors
