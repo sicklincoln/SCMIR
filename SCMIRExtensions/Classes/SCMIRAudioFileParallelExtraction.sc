@@ -101,7 +101,10 @@ PlayBuf.ar(whichchannel.neg, playbufnum, BufRateScale.kr(playbufnum), 1, 0, 0);
 
 		//SCMIR.waitIfRoutine(0.1);
 
-		analysisfilename = analysispath++basename++(uniquenum.asString)++"features.data";
+		//analysisfilename = (analysispath++basename++(uniquenum.asString)++"features.data").asUnixPath;
+
+		//safer since some filenames a bit weird and might be calling asUnixPath twice leading to all sorts of bad grammar...
+		analysisfilename = (analysispath++"parallelNRT"++(uniquenum.asString)++"features.data"); //.asUnixPath;
 
 		[\analysisfilename, analysisfilename, basename, uniquenum.asString].postln;
 
@@ -167,7 +170,15 @@ PlayBuf.ar(whichchannel.neg, playbufnum, BufRateScale.kr(playbufnum), 1, 0, 0);
 
 			//kill def file to avoid accumulation
 
+			("ls -al "++ defpath).unixCmd;
 			//("rm "++ defpath).postcs;
+
+
+			//further safety delay...
+			{
+
+				10.0.wait;
+
 			("rm "++ defpath).unixCmd;
 					//"/Users/ioi/Library/Application Support/SuperCollider/synthdefs/SCMIRAudioFileFeatures7.scsyndef".asUnixPath
 
@@ -175,7 +186,13 @@ PlayBuf.ar(whichchannel.neg, playbufnum, BufRateScale.kr(playbufnum), 1, 0, 0);
 			//SynthDescLib.global.at("SCMIRAudioFileFeatures27")
 			SynthDescLib.global.removeAt(defname);
 
+			}.fork;
+
 		//LOAD FEATURES
+
+
+		[\analysisfilenamesanitycheck,analysisfilename].postcs;
+
 		//Have to be careful; Little Endian is standard for Intel processors
 		file = SCMIRFile(analysisfilename,"rb");
 
